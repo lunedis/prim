@@ -1,3 +1,12 @@
 <template name="warlords">
     <p>Template warlords</p>
+	<ul>
+	{{#each warlords}}
+		{{> warlord}}
+	{{/each}}
+	</ul>
+</template>
+
+<template name="warlord">
+<li>{{characterID}} - {{characterName}} - {{joinDate}} - {{comment}}</li>	
 </template>
