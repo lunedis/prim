@@ -1,12 +1,25 @@
 <template name="warlords">
-    <p>Template warlords</p>
-	<ul>
+<div class="page-header">
+	<h1>
+		Warlords
+	</h1>
+</div>
+<div class="row">
 	{{#each warlords}}
 		{{> warlord}}
 	{{/each}}
-	</ul>
+</div>
 </template>
 
 <template name="warlord">
-<li>{{characterID}} - {{characterName}} - {{joinDate}} - {{comment}}</li>	
+<div class="col-sm-6 col-md-4" style="margin-bottom: 50px">
+	<div class="thumbnail">
+		<img class="center-block img-rounded img-thumbnail" src="https://image.eveonline.com/Character/{{characterID}}_128.jpg" alt="Portrait of {{characterName}}">
+		<div class="caption">
+			<h3 class="text-center">{{characterName}}</h3>
+			<p class="text-center">Member of <em>{{corporationName}}</em></p>
+			<p class="text-center">{{comment}}</p>
+		</div>
+	</div>
+</div>
 </template>

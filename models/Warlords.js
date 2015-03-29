@@ -8,6 +8,9 @@ Warlords.attachSchema(
 	characterName: {
 		type: String
 	},
+	corporationName: {
+		type: String
+	},
 	joinDate: {
 		type: Date
 	},
@@ -22,13 +25,13 @@ Warlords.attachSchema(
 if (Meteor.isServer) {
 	Warlords.allow({
 		insert : function () {
-			return false;
+			return true;
 		},
 		update : function () {
-			return false;
+			return true;
 		},
 		remove : function () {
-			return false;
+			return true;
 		}
 	});
 }
