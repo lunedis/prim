@@ -156,14 +156,67 @@ function assert(x) {
 	if(!x) throw "assert";
 }
 
-assert(libdogma.dogma_init() == DOGMA.OK);
-var contextPtrPtr = ref.alloc(dogma_context_tPtrPtr);
+initFits = function() {
+	libdogma.dogma_init();
+}
+Fit = function() {
+	var contextPtrPtr = ref.alloc(dogma_context_tPtrPtr);
+	assert(libdogma.dogma_init_context(contextPtrPtr) == DOGMA.OK);
+	this.dogmaContext = contextPtrPtr.deref();
+	this.ship = 0;
+	this.modules = [];
+}
+Fit.prototype.setShip = function(s) {
+	if(libdogma.dogma_set_ship(this.dogmaContext, s) == DOGMA.OK) {
+		this.ship = s;
+	}
+}
+Fit.prototype.addModule = function(module) {
+	var keyPtr = ref.alloc(dogma_key_tPtr);
+	if(libdogma.dogma_add_module_s(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active) == DOGMA.OK) {
+		var key = keyPtr.deref();
+		var m = {"key": key, "module": module};
+		this.modules.push(m);
+		return key;
+	}
+}
+Fit.prototype.addModuleWithCharge = function(module, charge) {
+	var keyPtr = ref.alloc(dogma_key_tPtr);
+	if(libdogma.dogma_add_module_sc(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active, charge) == DOGMA.OK) {
+		var key = keyPtr.deref();
+		var m = {"key": key, "module": module, "charge": charge};
+		this.modules.push(m);
+		return key;
+	}
+}
+Fit.prototype.getEHP = function() {
+	var attrIDs = [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265];
+	var doublePtr = ref.alloc(ref.types.double);
+	var attr = [];
+	for(var i = 0; i < attrIDs.length; ++i) {
+		libdogma.dogma_get_ship_attribute(this.dogmaContext, attrIDs[i], doublePtr);
+		attr[attrIDs[i]] = doublePtr.deref();
+	}
+	
+	var resihull = 1 / ((attr[109] + attr[110] + attr[111] + attr[113]) / 4);
+	var resiarmor = 1 / ((attr[267] + attr[268] + attr[269] + attr[270]) / 4);
+	var resishield = 1 / ((attr[271] + attr[272] + attr[273] + attr[274]) / 4);
+	var ehphull = attr[9] * resihull;
+	var ehparmor = attr[265] * resiarmor;
+	var ehpshield = attr[263] * resishield;
+	var ehp = ehphull + ehparmor + ehpshield;
+	
+	return ehp;
+}
+
+//assert(libdogma.dogma_init() == DOGMA.OK);
+/*var contextPtrPtr = ref.alloc(dogma_context_tPtrPtr);
 assert(libdogma.dogma_init_context(contextPtrPtr) == DOGMA.OK);
 var context = contextPtrPtr.deref();
 
-assert(libdogma.dogma_set_ship(context, TYPE_Rifter) == DOGMA.OK);
+//assert(libdogma.dogma_set_ship(context, TYPE_Rifter) == DOGMA.OK);
 
-libdogma.dogma_set_default_skill_level(context, 5);
+assert(libdogma.dogma_set_default_skill_level(context, 5) == DOGMA.OK);
 libdogma.dogma_set_ship(context, 11381);
 var keyPtr = ref.alloc(dogma_key_tPtr);
 libdogma.dogma_add_module_s(context, 5837, keyPtr, DOGMA.STATE_Active);
@@ -172,4 +225,17 @@ var doublePtr = ref.alloc(ref.types.double);
 libdogma.dogma_get_ship_attribute(context, 271, doublePtr);
 var value = 1.0 - doublePtr.deref();
 libdogma.dogma_free_context(context);
+console.log('Value: ' + value);*/
+
+initFits();
+var f = new Fit();
+f.setShip(11381);
+f.addModule(5837);
+f.addModule(31722);
+console.log('EHP: ' + f.getEHP());
+
+var doublePtr = ref.alloc(ref.types.double);
+libdogma.dogma_get_ship_attribute(f.dogmaContext, 271, doublePtr);
+var value = 1.0 - doublePtr.deref();
+libdogma.dogma_free_context(f.dogmaContext);
 console.log('Value: ' + value);
