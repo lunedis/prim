@@ -1,12 +1,10 @@
-// Write your package code here!
-
 var ffi = Npm.require('ffi');
 var ref = Npm.require ('ref');
 var Union = Npm.require('ref-union');;
 var StructType = Npm.require('ref-struct');
 
 var dogma_array_t = ref.types.void;
-var dogma_key_t = ref.types.void;
+var dogma_key_t = ref.types.uint32;
 var dogma_typeid_t = ref.types.uint32;
 var dogma_attributeid_t = ref.types.uint16;
 var dogma_effectid_t = ref.types.int32;
@@ -20,13 +18,14 @@ var DOGMA = {
 	OK: 0,
 	NOT_FOUND: 1,
 	NOT_APPLICABLE: 2,
-	LOC_Char: 1,
-	LOC_Implant: 2,
-	LOC_Skill: 3,
-	LOC_Ship: 4,
-	LOC_Module: 5,
-	LOC_Charge: 6,
-	LOC_Drone: 7,
+
+	LOC_Char: 0,
+	LOC_Implant: 1,
+	LOC_Skill: 2,
+	LOC_Ship: 3,
+	LOC_Module: 4,
+	LOC_Charge: 5,
+	LOC_Drone: 6,
 
 	STATE_Unplugged: 0,
 	STATE_Offline: 1,
@@ -36,7 +35,7 @@ var DOGMA = {
 };
 var dogma_state_t = ref.types.int;
 
-var location_union = new Union({
+/*var location_union = new Union({
 	implant_index: dogma_key_t,
 	module_index: dogma_key_t,
 	skill_typeid: dogma_typeid_t,
@@ -46,6 +45,11 @@ var location_union = new Union({
 var dogma_location_t = StructType({
 	type: dogma_location_type_e,
 	location: location_union
+});*/
+
+var dogma_location_t = StructType({
+	type: dogma_location_type_e,
+	index: dogma_key_t
 });
 
 var dogma_simple_affector_t = StructType({
@@ -154,6 +158,92 @@ var libdogma = ffi.Library('libdogma', {
 	'dogma_get_location_effect_attributes': ['int', [dogma_context_tPtr, dogma_location_t, dogma_effectid_t, doublePtr, doublePtr, doublePtr, doublePtr, doublePtr, doublePtr]]
 });
 
+function typeHasEffect(module, state, effect) {
+	var boolVal = ref.alloc(ref.types.bool);
+	if(libdogma.dogma_type_has_effect(module, state, effect, boolVal) === DOGMA.OK) {
+		return boolVal.deref();
+	} else {
+		// Error
+		console.log("Error");
+	}
+}
+function getLocationEffectAttributes(context, location, key, effect) {
+	var duration = ref.alloc(ref.types.double);
+	var tracking = ref.alloc(ref.types.double);
+	var discharge = ref.alloc(ref.types.double);
+	var range = ref.alloc(ref.types.double);
+	var falloff = ref.alloc(ref.types.double);
+	var usageChance = ref.alloc(ref.types.double);
+
+	var attributes = {};
+
+	var loc = new dogma_location_t;
+	loc.type = location;
+	loc.index = key;
+
+	if(libdogma.dogma_get_location_effect_attributes(
+		context, loc, effect,
+		duration, tracking, discharge,
+		range, falloff, usageChance) === DOGMA.OK) {
+
+		console.log('ok.');
+		attributes.duration = duration.deref();
+		attributes.tracking = tracking.deref();
+		attributes.discharge = discharge.deref();
+		attributes.range = range.deref();
+		attributes.falloff = falloff.deref();
+		attributes.usageChance = usageChance.deref();
+	} else {
+		console.log("Error");
+	}
+	return attributes;
+}
+function getShipAttribute(context, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_ship_attribute(context, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error");
+		return 0.0;
+	}
+}
+function getCharacterAttribute(context, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_character_attribute(context, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error");
+		return 0.0;
+	}
+}
+function getModuleAttribute(context, key, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_module_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error");
+		return 0.0;
+	}
+}
+function getChargeAttribute(context, key, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_charge_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error");
+		return 0.0;
+	}
+}
+function getDroneAttribute(context, drone, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_drone_attribute(context, drone, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error");
+		return 0.0;
+	}
+}
+
 function assert(x) {
 	if(!x) throw "assert";
 }
@@ -164,41 +254,71 @@ Desc.init = function() {
 }
 Desc.Fit = function() {
 	var contextPtrPtr = ref.alloc(dogma_context_tPtrPtr);
-	assert(libdogma.dogma_init_context(contextPtrPtr) == DOGMA.OK);
+	assert(libdogma.dogma_init_context(contextPtrPtr) === DOGMA.OK);
 	this.dogmaContext = contextPtrPtr.deref();
 	this.ship = 0;
 	this.modules = [];
+	this.drones = [];
+	this.implants = [];
 }
 Desc.Fit.prototype.setShip = function(s) {
-	if(libdogma.dogma_set_ship(this.dogmaContext, s) == DOGMA.OK) {
+	if(libdogma.dogma_set_ship(this.dogmaContext, s) === DOGMA.OK) {
 		this.ship = s;
 	}
 }
-Desc.Fit.prototype.addModule = function(module) {
-	var keyPtr = ref.alloc(dogma_key_tPtr);
-	if(libdogma.dogma_add_module_s(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active) == DOGMA.OK) {
+Desc.Fit.prototype.addImplant = function (implant) {
+	var keyPtr = ref.alloc(dogma_key_t);
+	if(libdogma.dogma_add_implant(this.dogmaContext, implant, keyPtr) === DOGMA.OK) {
 		var key = keyPtr.deref();
-		var m = {"key": key, "module": module};
+		var i = {"implant": implant, "key": key};
+		this.implants.push(i);
+		return key;
+	}
+}
+Desc.Fit.prototype.addModule = function(module) {
+	var keyPtr = ref.alloc(dogma_key_t);
+	if(libdogma.dogma_add_module_s(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active) === DOGMA.OK) {
+		var key = keyPtr.deref();
+		var m = {"key": key, "module": module, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
 	}
 }
 Desc.Fit.prototype.addModuleWithCharge = function(module, charge) {
-	var keyPtr = ref.alloc(dogma_key_tPtr);
-	if(libdogma.dogma_add_module_sc(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active, charge) == DOGMA.OK) {
+	var keyPtr = ref.alloc(dogma_key_t);
+	if(libdogma.dogma_add_module_sc(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active, charge) === DOGMA.OK) {
 		var key = keyPtr.deref();
-		var m = {"key": key, "module": module, "charge": charge};
+		var m = {"key": key, "module": module, "charge": charge, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
 	}
 }
-Desc.Fit.prototype.getEHP = function() {
-	var attrIDs = [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265];
-	var doublePtr = ref.alloc(ref.types.double);
+Desc.Fit.prototype.addDrone = function(drone, count) {
+	if(libdogma.dogma_add_drone(this.dogmaContext, drone, count) === DOGMA.OK) {
+		var d = {"typeID": drone, "count": count}
+		this.drones.push(d);
+	}
+	console.log(this.drones);
+}
+Desc.Fit.prototype.getStats = function() {
+	var ATTR_MISSILEDAMAGEMULTIPLIER = 212;
+	var ATTR_DAMAGEMULTIPLIER = 64;
+	var ATTR_EMDAMAGE = 114;
+	var ATTR_EXPLOSIVEDAMAGE = 116;
+	var ATTR_KINETICDAMAGE = 117;
+	var ATTR_THERMALDAMAGE = 118;
+	var EFFECT_TARGETATTACK = 10;
+	var EFFECT_PROJECTILEFIRED = 34;
+	var EFFECT_MISSILES = 101;
+	// TODO: Smartbombs + RR
+
+	stats = {};
+
+	// Tank
+	var attrIDs = [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265, 37, 552];
 	var attr = [];
 	for(var i = 0; i < attrIDs.length; ++i) {
-		libdogma.dogma_get_ship_attribute(this.dogmaContext, attrIDs[i], doublePtr);
-		attr[attrIDs[i]] = doublePtr.deref();
+		attr[attrIDs[i]] = getShipAttribute(this.dogmaContext, attrIDs[i]);
 	}
 	
 	var resihull = 1 / ((attr[109] + attr[110] + attr[111] + attr[113]) / 4);
@@ -207,7 +327,137 @@ Desc.Fit.prototype.getEHP = function() {
 	var ehphull = attr[9] * resihull;
 	var ehparmor = attr[265] * resiarmor;
 	var ehpshield = attr[263] * resishield;
-	var ehp = ehphull + ehparmor + ehpshield;
+	stats.ehp = ehphull + ehparmor + ehpshield;
 	
-	return ehp;
+	stats.speed = attr[37];
+	stats.sigRadius = attr[552];
+
+	stats.dps = 0;
+	stats.missileDPS = 0;
+	stats.turretDPS = 0;
+	stats.droneDPS = 0;
+	var effects = [EFFECT_MISSILES, EFFECT_PROJECTILEFIRED, EFFECT_TARGETATTACK];
+	for (var i = this.modules.length - 1; i >= 0; i--) {
+		var m = this.modules[i];
+
+		for (var j = effects.length - 1; j >= 0; j--) {
+			var e = effects[j];
+			if(typeHasEffect(m.module, m.state, e)) {
+				var effectAttributes = getLocationEffectAttributes(
+					this.dogmaContext, DOGMA.LOC_Module, m.key, e);
+
+				if(effectAttributes.duration < 1e-300)
+					continue;
+
+				if(e === EFFECT_MISSILES) {
+					var multiplier = getCharacterAttribute(
+						this.dogmaContext, ATTR_MISSILEDAMAGEMULTIPLIER);
+					var emDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_EMDAMAGE);
+					var explosiveDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_EXPLOSIVEDAMAGE);
+					var kineticDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_KINETICDAMAGE);
+					var thermalDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_THERMALDAMAGE);
+
+					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
+					stats.dps += dps;
+					stats.missileDPS += dps;
+				} else if (e === EFFECT_TARGETATTACK || e === EFFECT_PROJECTILEFIRED) {
+					var multiplier = getModuleAttribute(
+						this.dogmaContext, m.key, ATTR_DAMAGEMULTIPLIER);
+					var emDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_EMDAMAGE);
+					var explosiveDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_EXPLOSIVEDAMAGE);
+					var kineticDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_KINETICDAMAGE);
+					var thermalDamage = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_THERMALDAMAGE);
+					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
+					stats.dps += dps;
+					stats.turretDPS += dps;
+				}
+			}
+			
+		}
+	}
+
+	for (var i = this.drones.length - 1; i >= 0; i--) {
+		var d = this.drones[i];
+		var e = EFFECT_TARGETATTACK;
+		if(typeHasEffect(d.typeID, DOGMA.STATE_Active, e)) {
+			
+			var effectAttributes = getLocationEffectAttributes(
+				this.dogmaContext, DOGMA.LOC_Drone, d.typeID, e);
+
+			var multiplier = getDroneAttribute(
+				this.dogmaContext, d.typeID, ATTR_DAMAGEMULTIPLIER);
+			var emDamage = getDroneAttribute(
+				this.dogmaContext, d.typeID, ATTR_EMDAMAGE);
+			var explosiveDamage = getDroneAttribute(
+				this.dogmaContext, d.typeID, ATTR_EXPLOSIVEDAMAGE);
+			var kineticDamage = getDroneAttribute(
+				this.dogmaContext, d.typeID, ATTR_KINETICDAMAGE);
+			var thermalDamage = getDroneAttribute(
+				this.dogmaContext, d.typeID, ATTR_THERMALDAMAGE);
+			var dps = ((multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration) * d.count;
+			stats.dps += dps;
+			stats.droneDPS += dps;
+
+		}
+	};
+
+	stats.dps *= 1000;
+	stats.droneDPS *= 1000;
+	stats.turretDPS *= 1000;
+	stats.missileDPS *= 1000;
+
+	return stats;
+}
+
+Desc.FromEFT = function(fitting) {
+	var f = new Desc.Fit();
+
+	var lines = fitting.split("\n");
+
+	for (var i = 0; i < lines.length; i++) {
+		var l = lines[i].trim();
+
+		var headerRegex = /\[([A-Za-z ]+), (.*)\]/;
+		var droneRegex = /(.*) x([0-9]+)$/;
+		var moduleRegex = /([A-Za-z0-9 '\-\(\)]+)(, )?(.*)?/
+
+		var m;
+
+		if((m = headerRegex.exec(l)) !== null) {
+			console.log('Ship:' + m[1] + ', Name: ' + m[2]);
+		} else if((m = droneRegex.exec(l)) !== null) {
+			console.log('Drone: ' + m[1] + ' times ' + m[2]);
+		} else if((m = moduleRegex.exec(l)) !== null) {
+			if(typeof m[3] != 'undefined') {
+				console.log('Module ' + m[1] + ' with ammo ' + m[3]);
+			} else {
+				console.log('Module ' + m[1]);
+			}
+		}
+	}
+
+	return f;
+}
+
+Desc.getSkirmishLoki = function() {
+	var f = new Desc.Fit();
+	f.setShip(29990);
+    f.addImplant(21890);
+    f.addModule(29977);
+    f.addModule(30070);
+    f.addModule(30161);
+    f.addModule(30135);
+    f.addModule(4286);
+    f.addModule(4288);
+    f.addModule(4290);
+    f.addModule(11014);
+    f.addModule(11014);
 }

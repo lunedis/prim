@@ -2,7 +2,12 @@ Template['fittings'].helpers({
 });
 
 Template['fittings'].events({
-	"click .test": function() {
-		Meteor.call("dogmaTest");
+	"submit .test": function() {
+		try {
+			var text = event.target.text.value;
+			Meteor.call("dogmaTest", text);	
+		} catch (e) {
+			throw new Meteor.Error(500,e.reason, e.details);
+		}
 	}
 });

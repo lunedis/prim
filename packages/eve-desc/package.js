@@ -15,7 +15,7 @@ Package.onUse(function(api) {
 
   api.export('Desc', 'server');
   
-  api.addFiles('eve-desc.js');
+  api.addFiles('eve-desc.js', 'server');
 });
 
 Package.onTest(function(api) {

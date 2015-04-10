@@ -1,10 +1,8 @@
 Meteor.methods({
-	'dogmaTest': function() {
+	'dogmaTest': function(fitting) {
 		Desc.init();
-		var f = new Desc.Fit();
-		f.setShip(11381);
-		f.addModule(5837);
-		f.addModule(31722);
-		console.log('EHP: ' + f.getEHP());
+		var f = Desc.FromEFT(fitting);
+		var stats = f.getStats();
+		console.log(stats);
 	}
 });
