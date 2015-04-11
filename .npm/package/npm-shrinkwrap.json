@@ -14,12 +14,6 @@
             }
           }
         },
-        "ref": {
-          "version": "1.0.1"
-        },
-        "ref-struct": {
-          "version": "1.0.1"
-        },
         "nan": {
           "version": "1.7.0"
         }
