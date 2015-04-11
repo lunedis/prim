@@ -1,4 +1,90 @@
 <template name="fittings">
+<div class="row fit">
+	<div class="col-sm-2">
+		<img class="pull-right img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{fit.shipTypeID}}_128.png"/><br/>
+		<p class="h3 text-center">{{fit.role}}</p>
+	</div>
+	<div class="col-sm-6">
+		<h3>{{fit.shipTypeName}} <small>{{fit.subtitle}}</small></h3>
+		<div class="tabpanel">
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Info</a></li>
+				<li role="presentation"><a href="#stats" aria-controls="stats" role="tab" data-toggle="tab">Stats</a></li>
+				<li role="presentation"><a href="#tips" aria-controls="tips" role="tab" data-toggle="tab">Tips</a></li>
+				<li role="presentation"><a href="#fittingdoctor" aria-controls="fittingdoctor" role="tab" data-toggle="tab">Fitting Doctor</a></li>
+				<li role="presentation"><a href="#eft" aria-controls="eft" role="tab" data-toggle="tab">EFT</a></li>
+				</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="info">
+					<p>
+						{{fit.description}}
+					</p>
+					<p>
+						Difficulty: <span class="label label-danger">{{fit.difficulty}}</span>
+					</p>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="stats">
+					<table class="table table-condensed">
+						<tr>
+							<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
+							<td>{{fit.stats.ehp}}</td>
+						</tr>
+						<tr>
+							<td><img src="img/fourier/speed.png" class="statsIcon" alt="Propulsion Module"/> Speed:</td>
+							<td>{{fit.stats.speed}}</td>
+						</tr>
+						<tr>
+							<td><img src="img/fourier/dps.png" class="statsIcon" alt="Doomsday Device"/> DPS:</td>
+							<td>{{fit.stats.dps}}</td>
+						</tr>
+						<tr>
+							<td><img src="img/fourier/range.png" class="statsIcon" alt="Range"/> Range:</td>
+							<td>{{fit.stats.range}}</td>
+						</tr>
+					</table>				
+				</div>
+				<div role="tabpanel" class="tab-pane" id="tips">
+					<ul>
+						{{#each fit.tips}}
+							<li>
+								{{yield}}
+							</li>
+						{{/each}}
+					</ul>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="fittingdoctor">
+					<h4>not enough CPU</h4>
+					<p>{{fit.cpuDoctor}}</p>
+					<h4>not enough Powergrid</h4>
+					<p>{{fit.powergridDoctor}}</p>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="eft">
+					<pre>
+[Kestrel, MIG]
+ 
+Ballistic Control System II
+Nanofiber Internal Structure II
+ 
+Medium Azeotropic Ward Salubrity I
+Limited 1MN Microwarpdrive I
+Warp Disruptor II
+Fleeting Propulsion Inhibitor I
+ 
+Light Missile Launcher II, Caldari Navy Nova Light Missile
+Light Missile Launcher II, Caldari Navy Nova Light Missile
+Light Missile Launcher II, Caldari Navy Nova Light Missile
+Light Missile Launcher II, Caldari Navy Nova Light Missile
+ 
+Small Ancillary Current Router II
+Small Anti-EM Screen Reinforcer I
+Small Core Defense Field Extender I
+					</pre>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<h2>Support</h2>
     <p>Template fittings</p>
 	<p>
 		<form class="test">

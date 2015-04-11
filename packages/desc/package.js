@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'mikokoel:eve-desc',
+  name: 'leokokim:desc',
   version: '0.0.1',
   // Brief, one-line summary of the package.
   summary: 'Helper and wrapper for libdogma',
@@ -16,13 +16,14 @@ Package.onUse(function(api) {
   api.export('Desc', 'server');
   
   api.addFiles('invtypes.js', 'server');
-  api.addFiles('eve-desc.js', 'server');
+  api.addFiles('libdogmaffi.js', 'server');
+  api.addFiles('desc.js', 'server');
 });
 
 Package.onTest(function(api) {
   api.use('tinytest');
-  api.use('mikokoel:eve-desc');
-  api.addFiles('eve-desc-tests.js');
+  api.use('leokokim:desc');
+  api.addFiles('desc-tests.js');
 });
 
 Npm.depends({

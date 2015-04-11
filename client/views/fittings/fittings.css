@@ -1,0 +1,19 @@
+.img-fit {
+	margin: 25px 0 10px 0;
+
+}
+
+.statsIcon {
+	height: 38px;
+	width: 38px;
+}
+.statsIconSmall {
+	height: 32px;
+	width: 32px;
+}
+.tab-pane {
+	padding: 10px;
+	border-right: 1px solid #464545;
+	border-left: 1px solid #464545;
+	border-bottom: 1px solid #464545;
+}

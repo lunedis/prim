@@ -1,4 +1,27 @@
 Template['fittings'].helpers({
+	fit: function() {
+		return {
+			shipTypeID: 17738,
+			shipTypeName: "Machariel",
+			subtitle: "MWD Autocannon",
+			difficulty: "hard",
+			role: "DPS",
+			description: "The Machariel excels in dealing great damage from range as well as bringing the usual Battleship utility in form of Heavy Energy Neutralizer and Disruptors or Webs, while still retaining great mobility on the battlefield.",
+			stats: {
+				ehp: "20,070 (25,085)",
+				speed: "2845 m/s",
+				dps: "305",
+				range: "42 km"
+			},
+			tips: [
+				"Beware of the locktime of the Battleship. An incoming tackler can be quite close before you even lock him.",
+				"blablabla"
+			],		
+			cpuDoctor: "blablabla",
+			powergridDoctor: "blablabla",
+			eft: ""
+		};
+	}
 });
 
 Template['fittings'].events({
