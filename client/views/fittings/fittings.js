@@ -1,6 +1,7 @@
 Template['fittings'].helpers({
-	fit: function() {
-		return {
+	fits: function() {
+		return [{
+			_id: "blablabla",
 			shipTypeID: 17738,
 			shipTypeName: "Machariel",
 			subtitle: "MWD Autocannon",
@@ -20,7 +21,7 @@ Template['fittings'].helpers({
 			cpuDoctor: "blablabla",
 			powergridDoctor: "blablabla",
 			eft: ""
-		};
+		}];
 	}
 });
 

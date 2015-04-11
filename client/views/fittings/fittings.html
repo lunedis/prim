@@ -1,64 +1,70 @@
 <template name="fittings">
+{{#each fits}}
+	{{>fit}}
+{{/each}}
+</template>
+
+<template name="fit">
 <div class="row fit">
-	<div class="col-sm-2">
-		<img class="pull-right img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{fit.shipTypeID}}_128.png"/><br/>
-		<p class="h3 text-center">{{fit.role}}</p>
+	<div class="col-sm-3">
+		<img class="center-block img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{shipTypeID}}_128.png"/>
+		<p class="h3 text-center">{{role}}</p>
 	</div>
 	<div class="col-sm-6">
-		<h3>{{fit.shipTypeName}} <small>{{fit.subtitle}}</small></h3>
+		<h2>{{shipTypeName}} <small>{{subtitle}}</small></h2>
 		<div class="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Info</a></li>
-				<li role="presentation"><a href="#stats" aria-controls="stats" role="tab" data-toggle="tab">Stats</a></li>
-				<li role="presentation"><a href="#tips" aria-controls="tips" role="tab" data-toggle="tab">Tips</a></li>
-				<li role="presentation"><a href="#fittingdoctor" aria-controls="fittingdoctor" role="tab" data-toggle="tab">Fitting Doctor</a></li>
-				<li role="presentation"><a href="#eft" aria-controls="eft" role="tab" data-toggle="tab">EFT</a></li>
+				<li role="presentation" class="active"><a href="#info{{_id}}" aria-controls="info" role="tab" data-toggle="tab">Info</a></li>
+				<li role="presentation"><a href="#stats{{_id}}" aria-controls="stats" role="tab" data-toggle="tab">Stats</a></li>
+				<li role="presentation"><a href="#tips{{_id}}" aria-controls="tips" role="tab" data-toggle="tab">Tips</a></li>
+				<li role="presentation"><a href="#fittingdoctor{{_id}}" aria-controls="fittingdoctor" role="tab" data-toggle="tab">Fitting Doctor</a></li>
+				<li role="presentation"><a href="#eft{{_id}}" aria-controls="eft" role="tab" data-toggle="tab">EFT</a></li>
 				</ul>
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="info">
+				<div role="tabpanel" class="tab-pane active" id="info{{_id}}">
 					<p>
-						{{fit.description}}
+						{{description}}
 					</p>
 					<p>
-						Difficulty: <span class="label label-danger">{{fit.difficulty}}</span>
+						Difficulty: <span class="label label-danger">{{difficulty}}</span>
 					</p>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="stats">
+				<div role="tabpanel" class="tab-pane" id="stats{{_id}}">
 					<table class="table table-condensed">
 						<tr>
 							<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
-							<td>{{fit.stats.ehp}}</td>
+							<td>{{stats.ehp}}</td>
 						</tr>
 						<tr>
 							<td><img src="img/fourier/speed.png" class="statsIcon" alt="Propulsion Module"/> Speed:</td>
-							<td>{{fit.stats.speed}}</td>
+							<td>{{stats.speed}}</td>
 						</tr>
 						<tr>
 							<td><img src="img/fourier/dps.png" class="statsIcon" alt="Doomsday Device"/> DPS:</td>
-							<td>{{fit.stats.dps}}</td>
+							<td>{{stats.dps}}</td>
 						</tr>
 						<tr>
-							<td><img src="img/fourier/range.png" class="statsIcon" alt="Range"/> Range:</td>
-							<td>{{fit.stats.range}}</td>
+							<td><img src="img/fourier/range.png" class="statsIconSmall" alt="Range"/> &nbsp;Range:</td>
+							<td>{{stats.range}}</td>
 						</tr>
 					</table>				
 				</div>
-				<div role="tabpanel" class="tab-pane" id="tips">
+				<div role="tabpanel" class="tab-pane" id="tips{{_id}}">
 					<ul>
-						{{#each fit.tips}}
+						{{#each tips}}
 							<li>
-								{{yield}}
+								{{this}}
 							</li>
 						{{/each}}
 					</ul>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="fittingdoctor">
+				<div role="tabpanel" class="tab-pane" id="fittingdoctor{{_id}}">
 					<h4>not enough CPU</h4>
-					<p>{{fit.cpuDoctor}}</p>
+					<p>{{cpuDoctor}}</p>
 					<h4>not enough Powergrid</h4>
-					<p>{{fit.powergridDoctor}}</p>
+					<p>{{powergridDoctor}}</p>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="eft">
+				<div role="tabpanel" class="tab-pane" id="eft{{_id}}">
 					<pre>
 [Kestrel, MIG]
  
