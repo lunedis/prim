@@ -15,6 +15,7 @@ Package.onUse(function(api) {
 
   api.export('Desc', 'server');
   
+  api.addFiles('invtypes.js', 'server');
   api.addFiles('eve-desc.js', 'server');
 });
 

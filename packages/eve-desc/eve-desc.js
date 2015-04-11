@@ -186,7 +186,6 @@ function getLocationEffectAttributes(context, location, key, effect) {
 		duration, tracking, discharge,
 		range, falloff, usageChance) === DOGMA.OK) {
 
-		console.log('ok.');
 		attributes.duration = duration.deref();
 		attributes.tracking = tracking.deref();
 		attributes.discharge = discharge.deref();
@@ -203,7 +202,7 @@ function getShipAttribute(context, attribute) {
 	if(libdogma.dogma_get_ship_attribute(context, attribute, doubleVal) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
-		console.log("Error");
+		console.log("Error getting ship attribute");
 		return 0.0;
 	}
 }
@@ -212,7 +211,7 @@ function getCharacterAttribute(context, attribute) {
 	if(libdogma.dogma_get_character_attribute(context, attribute, doubleVal) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
-		console.log("Error");
+		console.log("Error getting character attribute");
 		return 0.0;
 	}
 }
@@ -221,7 +220,7 @@ function getModuleAttribute(context, key, attribute) {
 	if(libdogma.dogma_get_module_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
-		console.log("Error");
+		console.log("Error'getting module attribute");
 		return 0.0;
 	}
 }
@@ -230,7 +229,7 @@ function getChargeAttribute(context, key, attribute) {
 	if(libdogma.dogma_get_charge_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
-		console.log("Error");
+		console.log("Error getting charge attribute");
 		return 0.0;
 	}
 }
@@ -239,7 +238,7 @@ function getDroneAttribute(context, drone, attribute) {
 	if(libdogma.dogma_get_drone_attribute(context, drone, attribute, doubleVal) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
-		console.log("Error");
+		console.log("Error getting drone attribute");
 		return 0.0;
 	}
 }
@@ -298,7 +297,6 @@ Desc.Fit.prototype.addDrone = function(drone, count) {
 		var d = {"typeID": drone, "count": count}
 		this.drones.push(d);
 	}
-	console.log(this.drones);
 }
 Desc.Fit.prototype.getStats = function() {
 	var ATTR_MISSILEDAMAGEMULTIPLIER = 212;
@@ -417,6 +415,69 @@ Desc.Fit.prototype.getStats = function() {
 	return stats;
 }
 
+Desc.Fleet = function() {
+	var fleetContextPtrPtr = ref.alloc(dogma_fleet_context_tPtrPtr);
+	assert(libdogma.dogma_init_context(fleetContextPtrPtr) === DOGMA.OK);
+	this.fleetContext = fleetContextPtrPtr.deref();
+	this.commander = null;
+	this.fits = [];
+}
+Desc.Fleet.prototype.addFit = function(f) {
+	if(libdogma.dogma_add_squad_member(
+		this.fleetContext, 0, 0, f.dogmaContext) === DOGMA.OK) {
+		this.fits.push(f);
+	} else {
+		console.log("Error adding fit to fleet");
+	}
+}
+Desc.Fleet.prototype.setCommander = function(f) {
+	if(libdogma.dogma_add_squad_commander(
+		this.fleetContext, 0, 0, f.dogmaContext) === DOGMA.OK) {
+		this.commander = f;
+	} else {
+		console.log("Error setting fleet to commander");
+	}
+}
+function lookup(typeName) {
+	var type = InvTypes.findOne({typeName: typeName});
+	return type;
+}
+
+function lookupCategory(typeName, check) {
+	var type = lookup(typeName);
+	if(typeof type != 'undefined' && check(type.categoryName)) {
+		return type.typeID;
+	} else {
+		return false;
+	}
+}
+
+function lookupShip(typeName) {
+	return lookupCategory(typeName, function(categoryName) {
+		return categoryName === "Ship";
+	});
+}
+
+function lookupDrone(typeName) {
+	return lookupCategory(typeName, function(categoryName) {
+		return categoryName === "Drone";
+	});
+}
+
+function lookupCharge(typeName) {
+	return lookupCategory(typeName, function(categoryName) {
+		return categoryName === "Charge";
+	});
+}
+
+
+function lookupModule(typeName) {
+	return lookupCategory(typeName, function(categoryName) {
+		return categoryName === "Module" 
+			|| categoryName === "Subsystem";
+	});
+}
+
 Desc.FromEFT = function(fitting) {
 	var f = new Desc.Fit();
 
@@ -432,15 +493,34 @@ Desc.FromEFT = function(fitting) {
 		var m;
 
 		if((m = headerRegex.exec(l)) !== null) {
-			console.log('Ship:' + m[1] + ', Name: ' + m[2]);
-		} else if((m = droneRegex.exec(l)) !== null) {
-			console.log('Drone: ' + m[1] + ' times ' + m[2]);
-		} else if((m = moduleRegex.exec(l)) !== null) {
-			if(typeof m[3] != 'undefined') {
-				console.log('Module ' + m[1] + ' with ammo ' + m[3]);
+			var id;
+			if(id = lookupShip(m[1])) {
+				f.setShip(id);
 			} else {
-				console.log('Module ' + m[1]);
+				console.log("Error reading ship");
 			}
+		} else if((m = droneRegex.exec(l)) !== null) {
+			var id;
+			if(id = lookupDrone(m[1])) {
+				f.addDrone(id,m[2]);
+			} else {
+				//console.log("Error reading drone");
+			}
+		} else if((m = moduleRegex.exec(l)) !== null) {
+			var idModule;
+			if(idModule = lookupModule(m[1])) {
+				if(typeof m[3] != 'undefined') {
+					var idCharge;
+					if(idCharge = lookupCharge(m[3])) {
+						f.addModuleWithCharge(idModule, idCharge);
+					} else {
+						console.log("Error reading module");
+					}
+				} else {
+					f.addModule(idModule);
+				}
+			}
+			
 		}
 	}
 
@@ -460,4 +540,5 @@ Desc.getSkirmishLoki = function() {
     f.addModule(4290);
     f.addModule(11014);
     f.addModule(11014);
+    return f;
 }
