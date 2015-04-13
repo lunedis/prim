@@ -282,6 +282,7 @@ Desc.Fleet.prototype.setCommander = function(f) {
 Desc.ParseEFT = function(fitting) {
 	var parse = {};
 	parse.drones = [];
+	parse.charges = [];
 
 	var racks = [[],[],[],[],[]];
 	var currentRack = 0;
@@ -315,8 +316,8 @@ Desc.ParseEFT = function(fitting) {
 			var id;
 			if(id = lookupDrone(m[1])) {
 				parse.drones.push({typeID: id, typeName: m[1], quantity: m[2]});
-			} else {
-				//console.log("Error reading drone");
+			} else if(id = lookupCharge(m[1])) {
+				parse.charges.push({typeID: id, typeName: m[1], quantity: m[2]});
 			}
 		} else if((m = moduleRegex.exec(l)) !== null) {
 			var idModule;
