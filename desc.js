@@ -278,48 +278,11 @@ Desc.Fleet.prototype.setCommander = function(f) {
 		console.log("Error setting fleet to commander");
 	}
 }
-function lookup(typeName) {
-	var type = InvTypes.findOne({typeName: typeName});
-	return type;
-}
 
-function lookupCategory(typeName, check) {
-	var type = lookup(typeName);
-	if(typeof type != 'undefined' && check(type.categoryName)) {
-		return type.typeID;
-	} else {
-		return false;
-	}
-}
-
-function lookupShip(typeName) {
-	return lookupCategory(typeName, function(categoryName) {
-		return categoryName === "Ship";
-	});
-}
-
-function lookupDrone(typeName) {
-	return lookupCategory(typeName, function(categoryName) {
-		return categoryName === "Drone";
-	});
-}
-
-function lookupCharge(typeName) {
-	return lookupCategory(typeName, function(categoryName) {
-		return categoryName === "Charge";
-	});
-}
-
-
-function lookupModule(typeName) {
-	return lookupCategory(typeName, function(categoryName) {
-		return categoryName === "Module" 
-			|| categoryName === "Subsystem";
-	});
-}
-
-Desc.FromEFT = function(fitting) {
-	var f = new Desc.Fit();
+Desc.ParseEFT = function(fitting) {
+	var parse = {};
+	parse.drones = [];
+	parse.modules = [];
 
 	var lines = fitting.split("\n");
 
@@ -335,14 +298,15 @@ Desc.FromEFT = function(fitting) {
 		if((m = headerRegex.exec(l)) !== null) {
 			var id;
 			if(id = lookupShip(m[1])) {
-				f.setShip(id);
+				parse.shipTypeID = id;
+				parse.shipTypeName = m[1];
 			} else {
 				console.log("Error reading ship");
 			}
 		} else if((m = droneRegex.exec(l)) !== null) {
 			var id;
 			if(id = lookupDrone(m[1])) {
-				f.addDrone(id,m[2]);
+				parse.drones.push({typeID: id, typeName: m[1], quantity: m[2]});
 			} else {
 				//console.log("Error reading drone");
 			}
@@ -352,18 +316,41 @@ Desc.FromEFT = function(fitting) {
 				if(typeof m[3] != 'undefined') {
 					var idCharge;
 					if(idCharge = lookupCharge(m[3])) {
-						f.addModuleWithCharge(idModule, idCharge);
+						parse.modules.push({typeID: idModule, typeName: m[1],
+											chargeID: idCharge, chargeName: m[3]});
 					} else {
 						console.log("Error reading module");
 					}
 				} else {
-					f.addModule(idModule);
+					parse.modules.push({typeID: idModule, typeName: m[1]});
 				}
 			}
 			
 		}
 	}
 
+	return parse;
+}
+
+Desc.FromParse = function(parse) {
+	var f = new Desc.Fit();
+	f.setShip(parse.shipTypeID);
+	parse.modules.forEach(function(m) {
+		if(typeof m.chargeID != 'undefined') {
+			f.addModuleWithCharge(m.typeID, m.chargeID);
+		} else {
+			f.addModule(m.typeID);
+		}
+	});
+	parse.drones.forEach(function(d) {
+		f.addDrone(d.typeID, d.quantity);
+	});
+	return f;
+}
+
+Desc.FromEFT = function(fitting) {
+	var parse = Desc.ParseEFT(fitting);
+	var f = new Desc.FromParse(parse);
 	return f;
 }
 
