@@ -282,7 +282,10 @@ Desc.Fleet.prototype.setCommander = function(f) {
 Desc.ParseEFT = function(fitting) {
 	var parse = {};
 	parse.drones = [];
-	parse.modules = [];
+
+	var racks = [[],[],[],[],[]];
+	var currentRack = 0;
+	var moduleCount = 0;
 
 	var lines = fitting.split("\n");
 
@@ -294,6 +297,11 @@ Desc.ParseEFT = function(fitting) {
 		var moduleRegex = /([A-Za-z0-9 '\-\(\)]+)(, )?(.*)?/
 
 		var m;
+
+		if((l === '' || l === "\r") && moduleCount > 0) {
+			currentRack++;
+			moduleCount = 0;
+		}
 
 		if((m = headerRegex.exec(l)) !== null) {
 			var id;
@@ -316,32 +324,46 @@ Desc.ParseEFT = function(fitting) {
 				if(typeof m[3] != 'undefined') {
 					var idCharge;
 					if(idCharge = lookupCharge(m[3])) {
-						parse.modules.push({typeID: idModule, typeName: m[1],
+						racks[currentRack].push({typeID: idModule, typeName: m[1],
 											chargeID: idCharge, chargeName: m[3]});
+						moduleCount++;
 					} else {
 						console.log("Error reading module");
 					}
 				} else {
-					parse.modules.push({typeID: idModule, typeName: m[1]});
+					racks[currentRack].push({typeID: idModule, typeName: m[1]});
+					moduleCount++;
 				}
 			}
 			
 		}
 	}
 
+	parse.lows = racks[0];
+	parse.mids = racks[1];
+	parse.highs = racks[2];
+	parse.rigs = racks[3];
+	parse.subs = racks[4];
 	return parse;
 }
 
 Desc.FromParse = function(parse) {
 	var f = new Desc.Fit();
 	f.setShip(parse.shipTypeID);
-	parse.modules.forEach(function(m) {
+
+	function addModule(m) {
 		if(typeof m.chargeID != 'undefined') {
 			f.addModuleWithCharge(m.typeID, m.chargeID);
 		} else {
 			f.addModule(m.typeID);
 		}
-	});
+	}
+	parse.highs.forEach(addModule);
+	parse.mids.forEach(addModule);
+	parse.lows.forEach(addModule);
+	parse.rigs.forEach(addModule);
+	parse.subs.forEach(addModule);
+	
 	parse.drones.forEach(function(d) {
 		f.addDrone(d.typeID, d.quantity);
 	});
