@@ -8,6 +8,26 @@ Template['fittings'].helpers({
 			difficulty: "hard",
 			role: "DPS",
 			description: "The Machariel excels in dealing great damage from range as well as bringing the usual Battleship utility in form of Heavy Energy Neutralizer and Disruptors or Webs, while still retaining great mobility on the battlefield.",
+			fit: {
+				highs: [
+					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
+					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
+					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
+					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
+					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
+					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
+					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
+					{typeID: "15084", typeName: "Imperial Navy Heavy Energy Neutralizer"}
+				],
+				mids: [
+				],
+				lows: [
+					{typeID: "2048", typeName: "Damage Control II"},
+				],
+				rigs: {
+
+				}
+			},
 			stats: {
 				ehp: "20,070 (25,085)",
 				speed: "2845 m/s",
