@@ -20,17 +20,25 @@
 }
 .rack span {
 	text-align: center;
-	font-size: x-small;
+	font-size: small;
 	display: inline-block;
-	width: 40px;
+	width: 48px;
 	border: 1px solid #464545;
 	transform: rotate(270deg);
 	margin: -1px -17px 1px -15px;
 }
-.rack img {
+.rack img.module {
 	display: inline-block;
 	border: 1px solid #464545;
-	height: 40px;
-	width: 40px;
+	height: 48px;
+	width: 48px;
 	margin:1px -1px 0 0;
+}
+.rack img.charge {
+	display: inline-block;
+	background: rgba(50,50,50,0.5);
+	border: 1px solid #464545;
+	height: 24px;
+	width: 24px;
+	margin: 1px -1px -24px -23px;
 }

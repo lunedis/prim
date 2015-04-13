@@ -28,6 +28,7 @@
 					<p>
 						Difficulty: <span class="label label-danger">{{difficulty}}</span>
 					</p>
+					<h3>Fitting</h3>
 					{{>rack name="HIGH" modules=fit.highs}}
 					{{>rack name="MID" modules=fit.mids}}
 					{{>rack name="LOW" modules=fit.lows}}
@@ -115,4 +116,6 @@ Small Core Defense Field Extender I
 </div>
 </template>
 
-<template name="module"><img src="http://image.eveonline.com/Type/{{typeID}}_64.png"/></template>
+<template name="module">
+<img class="module" src="http://image.eveonline.com/Type/{{typeID}}_64.png" title="{{typeName}}" alt="{{typeName}}"/>{{#if chargeID}}<img class="charge" src="http://image.eveonline.com/Type/{{chargeID}}_32.png" title="{{chargeName}}" alt="{{chargeName}}"/>{{/if}}
+</template>
