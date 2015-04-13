@@ -28,6 +28,23 @@
 					<p>
 						Difficulty: <span class="label label-danger">{{difficulty}}</span>
 					</p>
+					<p>
+						{{#each fit.lows}}
+							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
+						{{/each}}
+					</p><p>
+						{{#each fit.mids}}
+							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
+						{{/each}}
+					</p><p>
+						{{#each fit.highs}}
+							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
+						{{/each}}
+					</p><p>
+						{{#each fit.rigs}}
+							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
+						{{/each}}
+					</p>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="stats{{_id}}">
 					<table class="table table-condensed">
