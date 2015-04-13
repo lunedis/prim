@@ -14,6 +14,8 @@ Template['fittings'].helpers({
 					{ typeID: 2364, typeName: 'Heat Sink II' },
 					{ typeID: 2364, typeName: 'Heat Sink II' },
 					{ typeID: 2364, typeName: 'Heat Sink II' },
+					{ typeID: 2364, typeName: 'Heat Sink II' },
+					{ typeID: 2364, typeName: 'Heat Sink II' },
 					{ typeID: 1999, typeName: 'Tracking Enhancer II' },
 					{ typeID: 1355, typeName: 'Reactor Control Unit II' } ],
 				mids: [ 
@@ -39,6 +41,16 @@ Template['fittings'].helpers({
 					{ typeID: 31480, typeName: 'Medium Energy Locus Coordinator I' },
 					{ typeID: 31718, typeName: 'Medium Anti-EM Screen Reinforcer I' } ],
 				subs: [], 
+				charges: [ 
+					{ typeID: 12822, typeName: 'Aurora M', quantity: '5' },
+					{ typeID: 12826, typeName: 'Gleam M', quantity: '5' },
+					{ typeID: 23089, typeName: 'Imperial Navy Multifrequency M', quantity: '5' },
+					{ typeID: 23095, typeName: 'Imperial Navy Ultraviolet M', quantity: '5' },
+					{ typeID: 23097, typeName: 'Imperial Navy Standard M', quantity: '5' },
+					{ typeID: 23103, typeName: 'Imperial Navy Radio M', quantity: '5' },
+					{ typeID: 28668, typeName: 'Nanite Repair Paste', quantity: '50' },
+					{ typeID: 32006, typeName: 'Navy Cap Booster 400', quantity: '30' } 
+				],
 			},
 			stats: {
 				ehp: "20,070 (25,085)",

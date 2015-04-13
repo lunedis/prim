@@ -28,12 +28,16 @@
 					<p>
 						Difficulty: <span class="label label-danger">{{difficulty}}</span>
 					</p>
-					<h3>Fitting</h3>
-					{{>rack name="HIGH" modules=fit.highs}}
-					{{>rack name="MID" modules=fit.mids}}
-					{{>rack name="LOW" modules=fit.lows}}
-					{{>rack name="RIG" modules=fit.rigs}}
-					{{>rack name="CRG" modules=fit.charges}}
+					<div class="fitting">
+						<p class="h3 text-center">Fitting</p>
+						<div class="racks">
+							{{>rack name="HIGH" modules=fit.highs}}
+							{{>rack name="MID" modules=fit.mids}}
+							{{>rack name="LOW" modules=fit.lows}}
+							{{>rack name="RIG" modules=fit.rigs}}
+							{{>rackSmall name="CRG" modules=fit.charges}}
+						</div>
+					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="stats{{_id}}">
 					<table class="table table-condensed">
@@ -111,6 +115,13 @@ Small Core Defense Field Extender I
 
 <template name="rack">
 <div class="rack">
+	<span>{{name}}</span>
+	{{#each modules}}{{>module}}{{/each}}
+</div>
+</template>
+
+<template name="rackSmall">
+<div class="rack small">
 	<span>{{name}}</span>
 	{{#each modules}}{{>module}}{{/each}}
 </div>
