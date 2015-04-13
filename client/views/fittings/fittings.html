@@ -14,12 +14,12 @@
 		<h2>{{shipTypeName}} <small>{{subtitle}}</small></h2>
 		<div class="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#info{{_id}}" aria-controls="info" role="tab" data-toggle="tab">Info</a></li>
-				<li role="presentation"><a href="#stats{{_id}}" aria-controls="stats" role="tab" data-toggle="tab">Stats</a></li>
-				<li role="presentation"><a href="#tips{{_id}}" aria-controls="tips" role="tab" data-toggle="tab">Tips</a></li>
-				<li role="presentation"><a href="#fittingdoctor{{_id}}" aria-controls="fittingdoctor" role="tab" data-toggle="tab">Fitting Doctor</a></li>
-				<li role="presentation"><a href="#eft{{_id}}" aria-controls="eft" role="tab" data-toggle="tab">EFT</a></li>
-				</ul>
+				{{>tab id=_id href="info" title="Info" class="active"}}
+				{{>tab id=_id href="stats" title="Stats"}}
+				{{>tab id=_id href="tips" title="Tips"}}
+				{{>tab id=_id href="fittingdoctor" title="Fitting Doctor"}}
+				{{>tab id=_id href="eft" title="EFT"}}
+			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="info{{_id}}">
 					<p>
@@ -28,23 +28,11 @@
 					<p>
 						Difficulty: <span class="label label-danger">{{difficulty}}</span>
 					</p>
-					<p>
-						{{#each fit.lows}}
-							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
-						{{/each}}
-					</p><p>
-						{{#each fit.mids}}
-							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
-						{{/each}}
-					</p><p>
-						{{#each fit.highs}}
-							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
-						{{/each}}
-					</p><p>
-						{{#each fit.rigs}}
-							<img src="http://image.eveonline.com/Type/{{typeID}}_32.png"/>
-						{{/each}}
-					</p>
+					{{>rack name="HIGH" modules=fit.highs}}
+					{{>rack name="MID" modules=fit.mids}}
+					{{>rack name="LOW" modules=fit.lows}}
+					{{>rack name="RIG" modules=fit.rigs}}
+					{{>rack name="CRG" modules=fit.charges}}
 				</div>
 				<div role="tabpanel" class="tab-pane" id="stats{{_id}}">
 					<table class="table table-condensed">
@@ -116,3 +104,15 @@ Small Core Defense Field Extender I
 		</form>
 	</p>
 </template>
+<template name="tab">
+<li role="presentation" class="{{class}}"><a href="#{{href}}{{id}}" aria-controls="{{href}}{{id}}" role="tab" data-toggle="tab">{{title}}</a></li>
+</template>
+
+<template name="rack">
+<div class="rack">
+	<span>{{name}}</span>
+	{{#each modules}}{{>module}}{{/each}}
+</div>
+</template>
+
+<template name="module"><img src="http://image.eveonline.com/Type/{{typeID}}_64.png"/></template>

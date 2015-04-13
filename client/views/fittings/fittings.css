@@ -18,3 +18,19 @@
 	border-left: 1px solid #464545;
 	border-bottom: 1px solid #464545;
 }
+.rack span {
+	text-align: center;
+	font-size: x-small;
+	display: inline-block;
+	width: 40px;
+	border: 1px solid #464545;
+	transform: rotate(270deg);
+	margin: -1px -17px 1px -15px;
+}
+.rack img {
+	display: inline-block;
+	border: 1px solid #464545;
+	height: 40px;
+	width: 40px;
+	margin:1px -1px 0 0;
+}
