@@ -9,24 +9,36 @@ Template['fittings'].helpers({
 			role: "DPS",
 			description: "The Machariel excels in dealing great damage from range as well as bringing the usual Battleship utility in form of Heavy Energy Neutralizer and Disruptors or Webs, while still retaining great mobility on the battlefield.",
 			fit: {
-				highs: [
-					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
-					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
-					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
-					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
-					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
-					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
-					{typeID: "2929", typeName: "800mm Repeating Artillery II"},
-					{typeID: "15084", typeName: "Imperial Navy Heavy Energy Neutralizer"}
-				],
-				mids: [
-				],
-				lows: [
-					{typeID: "2048", typeName: "Damage Control II"},
-				],
-				rigs: {
-
-				}
+				lows: [ 
+					{ typeID: 5837, typeName: 'Pseudoelectron Containment Field I' },
+					{ typeID: 2364, typeName: 'Heat Sink II' },
+					{ typeID: 2364, typeName: 'Heat Sink II' },
+					{ typeID: 2364, typeName: 'Heat Sink II' },
+					{ typeID: 1999, typeName: 'Tracking Enhancer II' },
+					{ typeID: 1355, typeName: 'Reactor Control Unit II' } ],
+				mids: [ 
+					{ typeID: 3841, typeName: 'Large Shield Extender II' },
+					{ typeID: 5975, typeName: 'Experimental 10MN Microwarpdrive I' },
+					{ typeID: 5011, typeName: 'Small Electrochemical Capacitor Booster I',
+						chargeID: 32006, chargeName: 'Navy Cap Booster 400' } ],
+				highs: [ 
+					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
+						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' },
+					{ typeID: 3025,
+						typeName: 'Heavy Beam Laser II',
+						chargeID: 23095,
+						chargeName: 'Imperial Navy Ultraviolet M' },
+					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
+						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' },
+					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
+						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' },
+					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
+						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' } ],
+				rigs: [ 
+					{ typeID: 31360, typeName: 'Medium Ancillary Current Router I' },
+					{ typeID: 31480, typeName: 'Medium Energy Locus Coordinator I' },
+					{ typeID: 31718, typeName: 'Medium Anti-EM Screen Reinforcer I' } ],
+				subs: [], 
 			},
 			stats: {
 				ehp: "20,070 (25,085)",
