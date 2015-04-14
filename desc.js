@@ -145,9 +145,14 @@ Desc.Fit.prototype.getStats = function() {
 	var ATTR_EXPLOSIVEDAMAGE = 116;
 	var ATTR_KINETICDAMAGE = 117;
 	var ATTR_THERMALDAMAGE = 118;
+	var ATTR_FLIGHTTIME = 281;
+	var ATTR_MISSILEVELOCITY = 37;
+	var ATTR_DRONECONTROLRANGE = 458;
+	var ATTR_LOCKRANGE = 76;
 	var EFFECT_TARGETATTACK = 10;
 	var EFFECT_PROJECTILEFIRED = 34;
 	var EFFECT_MISSILES = 101;
+
 	// TODO: Smartbombs + RR
 
 	stats = {};
@@ -171,6 +176,7 @@ Desc.Fit.prototype.getStats = function() {
 	stats.sigRadius = attr[552];
 
 	stats.dps = 0;
+	stats.range = {};
 	stats.missileDPS = 0;
 	stats.turretDPS = 0;
 	stats.droneDPS = 0;
@@ -202,6 +208,13 @@ Desc.Fit.prototype.getStats = function() {
 					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
 					stats.dps += dps;
 					stats.missileDPS += dps;
+
+					var missileVelocity = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_MISSILEVELOCITY);
+					var flightTime = getChargeAttribute(
+						this.dogmaContext, m.key, ATTR_FLIGHTTIME);
+					var range = missileVelocity * flightTime / 1000;
+					stats.range = {missileRange: range};
 				} else if (e === EFFECT_TARGETATTACK || e === EFFECT_PROJECTILEFIRED) {
 					var multiplier = getModuleAttribute(
 						this.dogmaContext, m.key, ATTR_DAMAGEMULTIPLIER);
@@ -216,6 +229,9 @@ Desc.Fit.prototype.getStats = function() {
 					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
 					stats.dps += dps;
 					stats.turretDPS += dps;
+
+					stats.range = {optimal: effectAttributes.range,
+									falloff: effectAttributes.falloff};
 				}
 			}
 			
@@ -246,6 +262,11 @@ Desc.Fit.prototype.getStats = function() {
 
 		}
 	};
+
+	if(stats.droneDPS > stats.turretDPS && stats.droneDPS > stats.missileDPS) {
+		var droneControlRange = getCharacterAttribute(this.dogmaContext, ATTR_DRONECONTROLRANGE);
+		stats.range = {droneControlRange: droneControlRange};
+	}
 
 	stats.dps *= 1000;
 	stats.droneDPS *= 1000;
