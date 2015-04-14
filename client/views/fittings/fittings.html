@@ -2,11 +2,19 @@
 {{#each fits}}
 	{{>fit}}
 {{/each}}
+<h2>Support</h2>
+    <p>Template fittings</p>
+	<p>
+		<form class="test">
+			<textarea type="text" name="text" ></textarea>
+			<input type="submit" name="test" value="Submit"/>
+		</form>
+	</p>
 </template>
 
 <template name="fit">
 <div class="row fit">
-	<div class="col-sm-3">
+	<div class="col-sm-2 col-sm-offset-1">
 		<img class="center-block img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{shipTypeID}}_128.png"/>
 		<p class="h3 text-center">{{role}}</p>
 	</div>
@@ -14,11 +22,11 @@
 		<h2>{{shipTypeName}} <small>{{subtitle}}</small></h2>
 		<div class="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				{{>tab id=_id href="info" title="Info" class="active"}}
-				{{>tab id=_id href="stats" title="Stats"}}
-				{{>tab id=_id href="tips" title="Tips"}}
-				{{>tab id=_id href="fittingdoctor" title="Fitting Doctor"}}
-				{{>tab id=_id href="eft" title="EFT"}}
+				{{>tab id=_id href="info" icon="info-sign" title="Info" class="active"}}
+				{{>tab id=_id href="stats" icon="signal" title="Stats"}}
+				{{>tab id=_id href="tips" icon="question-sign" title="Tips"}}
+				{{>tab id=_id href="fittingdoctor" icon="cog" title="Fitting Doctor"}}
+				{{>tab id=_id href="eft" icon="list" title="EFT"}}
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="info{{_id}}">
@@ -40,7 +48,7 @@
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="stats{{_id}}">
-					<table class="table table-condensed">
+					<table class="table table-bordered table-condensed">
 						<tr>
 							<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
 							<td>{{stats.ehp}}</td>
@@ -100,17 +108,9 @@ Small Core Defense Field Extender I
 		</div>
 	</div>
 </div>
-<h2>Support</h2>
-    <p>Template fittings</p>
-	<p>
-		<form class="test">
-			<textarea type="text" name="text" ></textarea>
-			<input type="submit" name="test" value="Submit"/>
-		</form>
-	</p>
 </template>
 <template name="tab">
-<li role="presentation" class="{{class}}"><a href="#{{href}}{{id}}" aria-controls="{{href}}{{id}}" role="tab" data-toggle="tab">{{title}}</a></li>
+<li role="presentation" class="{{class}}"><a href="#{{href}}{{id}}" aria-controls="{{href}}{{id}}" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-{{icon}}" aria-hidden="true"></span> {{title}}</a></li>
 </template>
 
 <template name="rack">

@@ -14,19 +14,23 @@
 }
 .tab-pane {
 	padding: 10px;
-	border-right: 1px solid #464545;
-	border-left: 1px solid #464545;
-	border-bottom: 1px solid #464545;
+	border: 1px solid #454545;
+	border-top-width: 0;
+	border-radius: 0 0 4px 4px;
 }
 .fitting {
 	border: 1px solid #464545;
+	border-radius: 4px;
 	margin: 20px 48px 0 48px;
 }
 .fitting .h3 {
-	background: #464545;
+	color: #00bc8c;
 	padding: 5px 0 5px 0;
 	margin: 0px;
 	border-bottom: 1px solid #464545;
+}
+.fitting .h3:hover {
+	background: #303030;
 }
 .racks {
 	padding: 10px 10px 10px 10px;
