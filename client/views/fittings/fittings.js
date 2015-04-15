@@ -1,71 +1,11 @@
+Meteor.subscribe('fittings');
+
 Template['fittings'].helpers({
 	fits: function() {
-		return [{
-			_id: "blablabla",
-			shipTypeID: 17738,
-			shipTypeName: "Machariel",
-			subtitle: "MWD Autocannon",
-			difficulty: "hard",
-			role: "DPS",
-			description: "The Machariel excels in dealing great damage from range as well as bringing the usual Battleship utility in form of Heavy Energy Neutralizer and Disruptors or Webs, while still retaining great mobility on the battlefield.",
-			fit: {
-				lows: [ 
-					{ typeID: 5837, typeName: 'Pseudoelectron Containment Field I' },
-					{ typeID: 2364, typeName: 'Heat Sink II' },
-					{ typeID: 2364, typeName: 'Heat Sink II' },
-					{ typeID: 2364, typeName: 'Heat Sink II' },
-					{ typeID: 2364, typeName: 'Heat Sink II' },
-					{ typeID: 2364, typeName: 'Heat Sink II' },
-					{ typeID: 1999, typeName: 'Tracking Enhancer II' },
-					{ typeID: 1355, typeName: 'Reactor Control Unit II' } ],
-				mids: [ 
-					{ typeID: 3841, typeName: 'Large Shield Extender II' },
-					{ typeID: 5975, typeName: 'Experimental 10MN Microwarpdrive I' },
-					{ typeID: 5011, typeName: 'Small Electrochemical Capacitor Booster I',
-						chargeID: 32006, chargeName: 'Navy Cap Booster 400' } ],
-				highs: [ 
-					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
-						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' },
-					{ typeID: 3025,
-						typeName: 'Heavy Beam Laser II',
-						chargeID: 23095,
-						chargeName: 'Imperial Navy Ultraviolet M' },
-					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
-						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' },
-					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
-						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' },
-					{ typeID: 3025, typeName: 'Heavy Beam Laser II',
-						chargeID: 23095, chargeName: 'Imperial Navy Ultraviolet M' } ],
-				rigs: [ 
-					{ typeID: 31360, typeName: 'Medium Ancillary Current Router I' },
-					{ typeID: 31480, typeName: 'Medium Energy Locus Coordinator I' },
-					{ typeID: 31718, typeName: 'Medium Anti-EM Screen Reinforcer I' } ],
-				subs: [], 
-				charges: [ 
-					{ typeID: 12822, typeName: 'Aurora M', quantity: '5' },
-					{ typeID: 12826, typeName: 'Gleam M', quantity: '5' },
-					{ typeID: 23089, typeName: 'Imperial Navy Multifrequency M', quantity: '5' },
-					{ typeID: 23095, typeName: 'Imperial Navy Ultraviolet M', quantity: '5' },
-					{ typeID: 23097, typeName: 'Imperial Navy Standard M', quantity: '5' },
-					{ typeID: 23103, typeName: 'Imperial Navy Radio M', quantity: '5' },
-					{ typeID: 28668, typeName: 'Nanite Repair Paste', quantity: '50' },
-					{ typeID: 32006, typeName: 'Navy Cap Booster 400', quantity: '30' } 
-				],
-			},
-			stats: {
-				ehp: "20,070 (25,085)",
-				speed: "2845 m/s",
-				dps: "305",
-				range: "42 km"
-			},
-			tips: [
-				"Beware of the locktime of the Battleship. An incoming tackler can be quite close before you even lock him.",
-				"blablabla"
-			],		
-			cpuDoctor: "blablabla",
-			powergridDoctor: "blablabla",
-			eft: ""
-		}];
+		return Fittings.find({});
+	},
+	filled: function(modules) {
+		return (modules.length > 0);
 	}
 });
 
@@ -77,5 +17,11 @@ Template['fittings'].events({
 		} catch (e) {
 			throw new Meteor.Error(500,e.reason, e.details);
 		}
+	}
+});
+
+Template['rackSmall'].helpers({
+	filled: function(modules) {
+		return (modules.length > 0);
 	}
 });

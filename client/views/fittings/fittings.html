@@ -22,14 +22,14 @@
 		<h2>{{shipTypeName}} <small>{{subtitle}}</small></h2>
 		<div class="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				{{>tab id=_id href="info" icon="info-sign" title="Info" class="active"}}
-				{{>tab id=_id href="stats" icon="signal" title="Stats"}}
-				{{>tab id=_id href="tips" icon="question-sign" title="Tips"}}
-				{{>tab id=_id href="fittingdoctor" icon="cog" title="Fitting Doctor"}}
-				{{>tab id=_id href="eft" icon="list" title="EFT"}}
+				{{>tab id=_id._str href="info" icon="info-sign" title="Info" class="active"}}
+				{{>tab id=_id._str href="stats" icon="signal" title="Stats"}}
+				{{>tab id=_id._str href="tips" icon="question-sign" title="Tips"}}
+				{{>tab id=_id._str href="fittingdoctor" icon="cog" title="Fitting Doctor"}}
+				{{>tab id=_id._str href="eft" icon="list" title="EFT"}}
 			</ul>
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="info{{_id}}">
+				<div role="tabpanel" class="tab-pane active" id="info{{_id._str}}">
 					<p>
 						{{description}}
 					</p>
@@ -37,17 +37,18 @@
 						Difficulty: <span class="label label-danger">{{difficulty}}</span>
 					</p>
 					<div class="fitting">
-						<p class="h3 text-center">Fitting</p>
+						<p class="h3 text-center">Loadout</p>
 						<div class="racks">
 							{{>rack name="HIGH" modules=fit.highs}}
 							{{>rack name="MID" modules=fit.mids}}
 							{{>rack name="LOW" modules=fit.lows}}
 							{{>rack name="RIG" modules=fit.rigs}}
+							{{>rackSmall name="SUBS" modules=fit.subs}}
 							{{>rackSmall name="CRG" modules=fit.charges}}
 						</div>
 					</div>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="stats{{_id}}">
+				<div role="tabpanel" class="tab-pane" id="stats{{_id._str}}">
 					<table class="table table-bordered table-condensed">
 						<tr>
 							<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
@@ -67,7 +68,7 @@
 						</tr>
 					</table>				
 				</div>
-				<div role="tabpanel" class="tab-pane" id="tips{{_id}}">
+				<div role="tabpanel" class="tab-pane" id="tips{{_id._str}}">
 					<ul>
 						{{#each tips}}
 							<li>
@@ -76,32 +77,25 @@
 						{{/each}}
 					</ul>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="fittingdoctor{{_id}}">
+				<div role="tabpanel" class="tab-pane" id="fittingdoctor{{_id._str}}">
 					<h4>not enough CPU</h4>
 					<p>{{cpuDoctor}}</p>
 					<h4>not enough Powergrid</h4>
 					<p>{{powergridDoctor}}</p>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="eft{{_id}}">
-					<pre>
-[Kestrel, MIG]
- 
-Ballistic Control System II
-Nanofiber Internal Structure II
- 
-Medium Azeotropic Ward Salubrity I
-Limited 1MN Microwarpdrive I
-Warp Disruptor II
-Fleeting Propulsion Inhibitor I
- 
-Light Missile Launcher II, Caldari Navy Nova Light Missile
-Light Missile Launcher II, Caldari Navy Nova Light Missile
-Light Missile Launcher II, Caldari Navy Nova Light Missile
-Light Missile Launcher II, Caldari Navy Nova Light Missile
- 
-Small Ancillary Current Router II
-Small Anti-EM Screen Reinforcer I
-Small Core Defense Field Extender I
+				<div role="tabpanel" class="tab-pane" id="eft{{_id._str}}">
+					<pre>[{{shipTypeName}}, MiG]{{#each fit.lows}}
+{{typeName}}{{/each}}
+{{#each fit.mids}}
+{{typeName}}{{/each}}
+{{#each fit.highs}}
+{{typeName}}{{/each}}
+{{#each fit.rigs}}
+{{typeName}}{{/each}}
+{{#each fit.drones}}
+{{typeName}} x{{quantity}}{{/each}}
+{{#each fit.charges}}
+{{typeName}} x{{quantity}}{{/each}}
 					</pre>
 				</div>
 			</div>
@@ -121,10 +115,12 @@ Small Core Defense Field Extender I
 </template>
 
 <template name="rackSmall">
+{{#if filled modules}}
 <div class="rack small">
 	<span>{{name}}</span>
 	{{#each modules}}{{>module}}{{/each}}
 </div>
+{{/if}}
 </template>
 
 <template name="module">

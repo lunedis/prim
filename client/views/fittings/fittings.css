@@ -3,7 +3,9 @@
 	margin-bottom: 10px;
 
 }
-
+.fit h2 {
+	border-bottom: 1px solid #454545;
+}
 .statsIcon {
 	height: 38px;
 	width: 38px;
