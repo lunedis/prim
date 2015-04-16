@@ -6,6 +6,10 @@ UI.registerHelper('formatNumber', function(context, options) {
 	}
 });
 
+Meteor.startup(function() {
+	this.$('body').scrollspy({target: '#fit-nav'});
+});
+
 Template['fittings'].rendered = function() {
 	this.$('#fit-nav').affix({
 		offset: {

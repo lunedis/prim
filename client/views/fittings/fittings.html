@@ -1,11 +1,11 @@
 <template name="fittings">
-<div class="row">
-	<div class="col-sm-9" data-spy="scroll" data-target="#scrollspy">
+<div class="row" id="scrollspy">
+	<div class="col-sm-9">
 		{{#each fits}}
 			{{>fit}}
 		{{/each}}
 	</div>
-	<div class="col-sm-3" id="scrollspy">
+	<div class="col-sm-3">
 		<nav id="fit-nav">
 			<ul class="nav nav-pills nav-stacked" data-spy="affix">
 			{{#each fits}}
