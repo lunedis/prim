@@ -1,3 +1,12 @@
+body {
+	position:relative;
+}
+
+.affix {
+	top: 20px;
+	width:263px;
+}
+
 .img-fit {
 	margin-top: 25px;
 	margin-bottom: 10px;

@@ -1,7 +1,22 @@
 <template name="fittings">
-{{#each fits}}
-	{{>fit}}
-{{/each}}
+<div class="row">
+	<div class="col-sm-9" data-spy="scroll" data-target="#scrollspy">
+		{{#each fits}}
+			{{>fit}}
+		{{/each}}
+	</div>
+	<div class="col-sm-3" id="scrollspy">
+		<nav id="fit-nav">
+			<ul class="nav nav-pills nav-stacked" data-spy="affix">
+			{{#each fits}}
+				<li>
+					<a href="#fit{{_id._str}}">{{shipTypeName}} <small>{{subtitle}}</small></a>
+				</li>
+			{{/each}}
+			</ul>
+		</nav>
+	</div>
+</div>
 <h2>Support</h2>
     <p>Template fittings</p>
 	<p>
@@ -13,12 +28,12 @@
 </template>
 
 <template name="fit">
-<div class="row fit">
-	<div class="col-sm-2 col-sm-offset-1">
+<div class="row fit" id="fit{{_id._str}}">
+	<div class="col-sm-3">
 		<img class="center-block img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{shipTypeID}}_128.png"/>
 		<p class="h3 text-center">{{role}}</p>
 	</div>
-	<div class="col-sm-6">
+	<div class="col-sm-9">
 		<h2>{{shipTypeName}} <small>{{subtitle}}</small></h2>
 		<div class="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
@@ -34,39 +49,20 @@
 						{{description}}
 					</p>
 					<p>
-						Difficulty: <span class="label label-danger">{{difficulty}}</span>
+						Difficulty: <span class="label {{labelColor}}">{{difficulty}}</span>
 					</p>
-					<div class="fitting">
-						<p class="h3 text-center">Loadout</p>
-						<div class="racks">
-							{{>rack name="HIGH" modules=fit.highs}}
-							{{>rack name="MID" modules=fit.mids}}
-							{{>rack name="LOW" modules=fit.lows}}
-							{{>rack name="RIG" modules=fit.rigs}}
-							{{>rackSmall name="SUBS" modules=fit.subs}}
-							{{>rackSmall name="CRG" modules=fit.charges}}
-						</div>
-					</div>
+					{{#with fit}}
+						{{>loadout}}
+					{{/with}}
 				</div>
 				<div role="tabpanel" class="tab-pane" id="stats{{_id._str}}">
-					<table class="table table-bordered table-condensed">
-						<tr>
-							<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
-							<td>{{stats.ehp}}</td>
-						</tr>
-						<tr>
-							<td><img src="img/fourier/speed.png" class="statsIcon" alt="Propulsion Module"/> Speed:</td>
-							<td>{{stats.speed}}</td>
-						</tr>
-						<tr>
-							<td><img src="img/fourier/dps.png" class="statsIcon" alt="Doomsday Device"/> DPS:</td>
-							<td>{{stats.dps}}</td>
-						</tr>
-						<tr>
-							<td><img src="img/fourier/range.png" class="statsIconSmall" alt="Range"/> &nbsp;Range:</td>
-							<td>{{stats.range}}</td>
-						</tr>
-					</table>				
+					<div class="row">
+						<div class="col-sm-8 col-sm-offset-1">
+						{{#with stats}}
+							{{>stats}}
+						{{/with}}	
+						</div>		
+					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="tips{{_id._str}}">
 					<ul>
@@ -84,19 +80,7 @@
 					<p>{{powergridDoctor}}</p>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="eft{{_id._str}}">
-					<pre>[{{shipTypeName}}, MiG]{{#each fit.lows}}
-{{typeName}}{{/each}}
-{{#each fit.mids}}
-{{typeName}}{{/each}}
-{{#each fit.highs}}
-{{typeName}}{{/each}}
-{{#each fit.rigs}}
-{{typeName}}{{/each}}
-{{#each fit.drones}}
-{{typeName}} x{{quantity}}{{/each}}
-{{#each fit.charges}}
-{{typeName}} x{{quantity}}{{/each}}
-					</pre>
+					{{>eft}}
 				</div>
 			</div>
 		</div>
@@ -105,6 +89,21 @@
 </template>
 <template name="tab">
 <li role="presentation" class="{{class}}"><a href="#{{href}}{{id}}" aria-controls="{{href}}{{id}}" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-{{icon}}" aria-hidden="true"></span> {{title}}</a></li>
+</template>
+
+<template name="loadout">
+<div class="fitting">
+	<p class="h3 text-center">Loadout</p>
+	<div class="racks">
+		{{>rack name="HIGH" modules=highs}}
+		{{>rack name="MID" modules=mids}}
+		{{>rack name="LOW" modules=lows}}
+		{{>rack name="RIG" modules=rigs}}
+		{{>rackSmall name="SUBS" modules=subs}}
+		{{>rackSmall name="DRNS" modules=drones}}
+		{{>rackSmall name="CRG" modules=charges}}
+	</div>
+</div>
 </template>
 
 <template name="rack">
@@ -125,4 +124,41 @@
 
 <template name="module">
 <img class="module" src="http://image.eveonline.com/Type/{{typeID}}_64.png" title="{{typeName}}" alt="{{typeName}}"/>{{#if chargeID}}<img class="charge" src="http://image.eveonline.com/Type/{{chargeID}}_32.png" title="{{chargeName}}" alt="{{chargeName}}"/>{{/if}}
+</template>
+
+<template name="stats">
+<table class="table table-condensed">
+	<tr>
+		<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
+		<td>{{formatNumber ehp}}</td>
+	</tr>
+	<tr>
+		<td><img src="img/fourier/speed.png" class="statsIcon" alt="Propulsion Module"/> Speed:</td>
+		<td>{{formatNumber speed}} m/s</td>
+	</tr>
+	<tr>
+		<td><img src="img/fourier/dps.png" class="statsIcon" alt="Doomsday Device"/> DPS:</td>
+		<td>{{formatNumber dps}}</td>
+	</tr>
+	<tr>
+		<td><img src="img/fourier/range.png" class="statsIconSmall" alt="Range"/> &nbsp;Range:</td>
+		<td>{{range}} km</td>
+	</tr>
+</table>		
+</template>
+
+<template name="eft">
+<pre>[{{shipTypeName}}, MiG]{{#each fit.lows}}
+{{typeName}}{{/each}}
+{{#each fit.mids}}
+{{typeName}}{{/each}}
+{{#each fit.highs}}
+{{typeName}}{{/each}}
+{{#each fit.rigs}}
+{{typeName}}{{/each}}
+{{#each fit.drones}}
+{{typeName}} x{{quantity}}{{/each}}
+{{#each fit.charges}}
+{{typeName}} x{{quantity}}{{/each}}
+</pre>
 </template>

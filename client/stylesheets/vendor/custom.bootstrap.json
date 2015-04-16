@@ -38,11 +38,11 @@
   "popovers":             false,
   "carousel":             false,
   
-  "affix":                false,
+  "affix":                true,
   "alert":                true,
   "button":               true,
   "collapse":             false,
-  "scrollspy":            false,
+  "scrollspy":            true,
   "tab":                  true,
   "transition":           false,
 

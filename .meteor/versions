@@ -29,7 +29,7 @@ geojson-utils@1.0.3
 html-tools@1.0.4
 htmljs@1.0.4
 http@1.1.0
-ian:accounts-ui-bootstrap-3@1.2.40
+ian:accounts-ui-bootstrap-3@1.2.46
 id-map@1.0.3
 iron:controller@1.0.7
 iron:core@1.0.7
@@ -42,6 +42,7 @@ iron:url@1.0.7
 jquery@1.11.3_2
 json@1.0.3
 launch-screen@1.0.2
+leokokim:desc@0.0.1
 less@1.0.14
 livedata@1.0.13
 localstorage@1.0.3
@@ -53,13 +54,12 @@ meteor-platform@1.2.2
 meteorhacks:fast-render@2.3.2
 meteorhacks:inject-data@1.2.3
 meteorhacks:picker@1.0.2
-leokokim:desc@0.0.1
 minifiers@1.1.5
 minimongo@1.0.8
 mobile-status-bar@1.0.3
 mongo@1.1.0
 natestrauser:animate-css@3.2.6
-nemo64:bootstrap@3.3.4_1
+nemo64:bootstrap@3.3.4_2
 nemo64:bootstrap-data@3.3.4_1
 npm-bcrypt@0.7.8_2
 oauth@1.1.4
@@ -84,9 +84,9 @@ templating@1.1.1
 tracker@1.0.7
 ui@1.0.6
 underscore@1.0.3
+underscorestring:underscore.string@3.0.3
 url@1.0.4
 webapp@1.2.0
 webapp-hashing@1.0.3
-wizonesolutions:underscore-string@1.0.0
-zimme:iron-router-active@1.0.1
+zimme:iron-router-active@1.0.4
 zweizeichen:accounts-eve@1.0.0
