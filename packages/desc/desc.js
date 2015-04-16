@@ -280,7 +280,8 @@ Desc.Fleet = function() {
 	var fleetContextPtrPtr = ref.alloc(dogma_fleet_context_tPtrPtr);
 	assert(libdogma.dogma_init_context(fleetContextPtrPtr) === DOGMA.OK);
 	this.fleetContext = fleetContextPtrPtr.deref();
-	this.commander = null;
+	this.squadCommander = null;
+	this.wingCommander = null;
 	this.fits = [];
 }
 Desc.Fleet.prototype.addFit = function(f) {
@@ -291,10 +292,18 @@ Desc.Fleet.prototype.addFit = function(f) {
 		console.log("Error adding fit to fleet");
 	}
 }
-Desc.Fleet.prototype.setCommander = function(f) {
+Desc.Fleet.prototype.setSquadCommander = function(f) {
 	if(libdogma.dogma_add_squad_commander(
 		this.fleetContext, 0, 0, f.dogmaContext) === DOGMA.OK) {
-		this.commander = f;
+		this.squadCommander = f;
+	} else {
+		console.log("Error setting fleet to commander");
+	}
+}
+Desc.Fleet.prototype.setWingCommander = function(f) {
+	if(libdogma.dogma_add_wing_commander(
+		this.fleetContext, 0, f.dogmaContext) === DOGMA.OK) {
+		this.wingCommander = f;
 	} else {
 		console.log("Error setting fleet to commander");
 	}
@@ -409,6 +418,40 @@ Desc.getSkirmishLoki = function() {
     f.addModule(4286);
     f.addModule(4288);
     f.addModule(4290);
+    f.addModule(11014);
+    f.addModule(11014);
+    return f;
+}
+
+Desc.getStandardLinks1 = function() {
+	var f = new Desc.Fit();
+	f.setShip(29990);
+    f.addImplant(33405);
+    f.addModule(29977);
+    f.addModule(30070);
+    f.addModule(30161);
+    f.addModule(30135);
+    f.addModule(4286);
+    f.addModule(4288);
+    f.addModule(4290);
+    f.addModule(4284);
+    f.addModule(11014);
+    f.addModule(11014);
+    f.addModule(11014);
+    return f;
+}
+
+Desc.getStandardLinks2 = function() {
+	var f = new Desc.Fit();
+	f.setShip(29986);
+    f.addImplant(33403);
+    f.addModule(29967);
+    f.addModule(30040);
+    f.addModule(30076);
+    f.addModule(30120);
+    f.addModule(4264);
+    f.addModule(4272);
+    f.addModule(11014);
     f.addModule(11014);
     f.addModule(11014);
     return f;
