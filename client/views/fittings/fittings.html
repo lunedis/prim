@@ -58,9 +58,7 @@
 				<div role="tabpanel" class="tab-pane" id="stats{{_id._str}}">
 					<div class="row">
 						<div class="col-sm-8 col-sm-offset-1">
-						{{#with stats}}
 							{{>stats}}
-						{{/with}}	
 						</div>		
 					</div>
 				</div>
@@ -130,19 +128,19 @@
 <table class="table table-condensed">
 	<tr>
 		<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
-		<td>{{formatNumber ehp}}</td>
+		<td>{{formatNumber stats.ehp}} ({{formatNumber statsLinked.ehp}})</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/speed.png" class="statsIcon" alt="Propulsion Module"/> Speed:</td>
-		<td>{{formatNumber speed}} m/s</td>
+		<td>{{formatNumber stats.speed}} m/s ({{formatNumber statsLinked.speed}} m/s)</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/dps.png" class="statsIcon" alt="Doomsday Device"/> DPS:</td>
-		<td>{{formatNumber dps}}</td>
+		<td>{{formatNumber stats.dps}}</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/range.png" class="statsIconSmall" alt="Range"/> &nbsp;Range:</td>
-		<td>{{range}} km</td>
+		<td>{{stats.range}} km</td>
 	</tr>
 </table>		
 </template>
