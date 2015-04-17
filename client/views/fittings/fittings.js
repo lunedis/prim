@@ -44,8 +44,10 @@ Template['fit'].helpers({
 			return 'label-danger';
 		} else if(this.difficulty === 'easy') {
 			return 'label-success';
-		} else {
+		} else if(this.difficulty === 'medium') {
 			return 'label-warning';
+		} else {
+			return 'label-info';
 		}
 	}
 })

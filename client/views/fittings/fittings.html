@@ -10,21 +10,22 @@
 			<ul class="nav nav-pills nav-stacked" data-spy="affix">
 			{{#each fits}}
 				<li>
-					<a href="#fit{{_id._str}}">{{shipTypeName}} <small>{{subtitle}}</small></a>
+					<a href="#fit{{_id._str}}">{{shipTypeName}} - <small>{{subtitle}}</small></a>
 				</li>
 			{{/each}}
 			</ul>
 		</nav>
 	</div>
 </div>
-<h2>Support</h2>
-    <p>Template fittings</p>
-	<p>
-		<form class="test">
-			<textarea type="text" name="text" ></textarea>
-			<input type="submit" name="test" value="Submit"/>
-		</form>
-	</p>
+{{#if currentUser}}
+<h3>Add new Fit</h3>
+<p>
+	<form class="test">
+		<textarea type="text" name="text" ></textarea>
+		<input type="submit" name="test" value="Submit" class="btn btn-primary"/>
+	</form>
+</p>
+{{/if}}
 </template>
 
 <template name="fit">
@@ -46,10 +47,15 @@
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="info{{_id._str}}">
 					<p>
-						{{description}}
+					{{#ifEmpty description}}
+						<i>not available</i>
+					{{/ifEmpty}}
 					</p>
 					<p>
-						Difficulty: <span class="label {{labelColor}}">{{difficulty}}</span>
+						Difficulty: <span class="label {{labelColor}}">{{#ifEmpty difficulty}}
+							unknown
+						{{/ifEmpty}}
+						</span>
 					</p>
 					{{#with fit}}
 						{{>loadout}}
@@ -63,19 +69,10 @@
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="tips{{_id._str}}">
-					<ul>
-						{{#each tips}}
-							<li>
-								{{this}}
-							</li>
-						{{/each}}
-					</ul>
+					{{>tips}}	
 				</div>
 				<div role="tabpanel" class="tab-pane" id="fittingdoctor{{_id._str}}">
-					<h4>not enough CPU</h4>
-					<p>{{cpuDoctor}}</p>
-					<h4>not enough Powergrid</h4>
-					<p>{{powergridDoctor}}</p>
+					{{>fittingDoctor fittingDoctor}}
 				</div>
 				<div role="tabpanel" class="tab-pane" id="eft{{_id._str}}">
 					{{>eft}}
@@ -159,4 +156,61 @@
 {{#each fit.charges}}
 {{typeName}} x{{quantity}}{{/each}}
 </pre>
+</template>
+
+<template name="tips">
+{{#if tips}}
+	<ul>
+	{{#each tips}}
+		<li>
+			{{this}}
+		</li>
+	{{/each}}
+	</ul>
+{{else}}
+	<p><i>not available</i></p>
+{{/if}}	 
+</template>
+
+<template name="fittingDoctor">
+{{#if cpu}}
+<h5>CPU</h5>
+	<ul>
+	{{#each cpu}}
+		<li>
+			{{this}}
+		</li>
+	{{/each}}
+	</ul>
+{{/if}}
+
+{{#if powergrid}}
+<h5>Powergrid</h5>
+	<ul>
+	{{#each powergrid}}
+		<li>
+			{{this}}
+		</li>
+	{{/each}}
+	</ul>
+{{/if}}
+
+{{#if other}}
+<h5>Other</h5>
+	<ul>
+	{{#each other}}
+		<li>
+			{{this}}
+		</li>
+	{{/each}}
+	</ul>
+{{/if}}
+</template>
+
+<template name="ifEmpty">
+	{{#if this}}
+		{{this}}
+	{{else}}
+		{{> Template.contentBlock}}
+	{{/if}}
 </template>
