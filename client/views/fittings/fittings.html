@@ -10,7 +10,7 @@
 			<ul class="nav nav-pills nav-stacked" data-spy="affix">
 			{{#each fits}}
 				<li>
-					<a href="#fit{{_id._str}}">{{shipTypeName}} - <small>{{subtitle}}</small></a>
+					<a href="#fit{{_id}}">{{shipTypeName}} - <small>{{subtitle}}</small></a>
 				</li>
 			{{/each}}
 			</ul>
@@ -29,7 +29,7 @@
 </template>
 
 <template name="fit">
-<div class="row fit" id="fit{{_id._str}}">
+<div class="row fit" id="fit{{_id}}">
 	<div class="col-sm-3">
 		<img class="center-block img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{shipTypeID}}_128.png"/>
 		<p class="h3 text-center">{{role}}</p>
@@ -38,14 +38,14 @@
 		<h2>{{shipTypeName}} <small>{{subtitle}}</small></h2>
 		<div class="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				{{>tab id=_id._str href="info" icon="info-sign" title="Info" class="active"}}
-				{{>tab id=_id._str href="stats" icon="signal" title="Stats"}}
-				{{>tab id=_id._str href="tips" icon="question-sign" title="Tips"}}
-				{{>tab id=_id._str href="fittingdoctor" icon="cog" title="Fitting Doctor"}}
-				{{>tab id=_id._str href="eft" icon="list" title="EFT"}}
+				{{>tab id=_id href="info" icon="info-sign" title="Info" class="active"}}
+				{{>tab id=_id href="stats" icon="signal" title="Stats"}}
+				{{>tab id=_id href="tips" icon="question-sign" title="Tips"}}
+				{{>tab id=_id href="fittingdoctor" icon="cog" title="Fitting Doctor"}}
+				{{>tab id=_id href="eft" icon="list" title="EFT"}}
 			</ul>
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="info{{_id._str}}">
+				<div role="tabpanel" class="tab-pane active" id="info{{_id}}">
 					<p>
 					{{#ifEmpty description}}
 						<i>not available</i>
@@ -61,20 +61,20 @@
 						{{>loadout}}
 					{{/with}}
 				</div>
-				<div role="tabpanel" class="tab-pane" id="stats{{_id._str}}">
+				<div role="tabpanel" class="tab-pane" id="stats{{_id}}">
 					<div class="row">
 						<div class="col-sm-8 col-sm-offset-1">
 							{{>stats}}
 						</div>		
 					</div>
 				</div>
-				<div role="tabpanel" class="tab-pane" id="tips{{_id._str}}">
+				<div role="tabpanel" class="tab-pane" id="tips{{_id}}">
 					{{>tips}}	
 				</div>
 				<div role="tabpanel" class="tab-pane" id="fittingdoctor{{_id._str}}">
 					{{>fittingDoctor fittingDoctor}}
 				</div>
-				<div role="tabpanel" class="tab-pane" id="eft{{_id._str}}">
+				<div role="tabpanel" class="tab-pane" id="eft{{_id}}">
 					{{>eft}}
 				</div>
 			</div>
@@ -103,7 +103,7 @@
 
 <template name="rack">
 <div class="rack">
-	<span>{{name}}</span>
+	<span class="rackName">{{name}}</span>
 	{{#each modules}}{{>module}}{{/each}}
 </div>
 </template>
@@ -111,14 +111,14 @@
 <template name="rackSmall">
 {{#if filled modules}}
 <div class="rack small">
-	<span>{{name}}</span>
+	<span class="rackName">{{name}}</span>
 	{{#each modules}}{{>module}}{{/each}}
 </div>
 {{/if}}
 </template>
 
 <template name="module">
-<img class="module" src="http://image.eveonline.com/Type/{{typeID}}_64.png" title="{{typeName}}" alt="{{typeName}}"/>{{#if chargeID}}<img class="charge" src="http://image.eveonline.com/Type/{{chargeID}}_32.png" title="{{chargeName}}" alt="{{chargeName}}"/>{{/if}}
+<div class="module"><img class="module" src="http://image.eveonline.com/Type/{{typeID}}_64.png" title="{{typeName}}" alt="{{typeName}}"/>{{#if chargeID}}<img class="charge" src="http://image.eveonline.com/Type/{{chargeID}}_32.png" title="{{chargeName}}" alt="{{chargeName}}"/>{{/if}}{{#if quantity}}<span class="quantity">{{quantity}}</span>{{/if}}</div>
 </template>
 
 <template name="stats">
@@ -149,7 +149,7 @@
 				{{#if missileRange}}
 					&lt;{{formatNumber missileRange}} km
 				{{else}}
-					{{formatNumber droneControLRange}} km
+					{{formatNumber droneControlRange}} km
 				{{/if}}
 			{{/if}}
 		{{/with}}

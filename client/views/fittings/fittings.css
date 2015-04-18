@@ -49,7 +49,7 @@ body {
 .rack {
 	margin: 0 0 1px 0;
 }
-.rack span {
+.rack span.rackName {
 	text-align: center;
 	font-size: small;
 	display: inline-block;
@@ -58,10 +58,14 @@ body {
 	transform: rotate(270deg);
 	margin: 0 -17px 0 -14px;
 }
-.rack.small span {
+.rack.small span.rackName {
 	font-size: x-small;
 	width:32px;
 	margin: 0 -11px 0 -4px;
+}
+div.module {
+	position: relative;
+	display:inline-block;
 }
 .rack img.module {
 	display: inline-block;
@@ -75,10 +79,17 @@ body {
 	height:32px;
 }
 .rack img.charge {
-	display: inline-block;
+	position: absolute;
 	background: rgba(50,50,50,0.5);
 	border: 1px solid #464545;
 	height: 24px;
 	width: 24px;
-	margin: 0 1px -23px -25px;
+	bottom: 0px;
+	right: 1px;
+}
+.rack.small span.quantity {
+	position: absolute;
+	font-size: x-small;
+	bottom:0px;
+	right:4px;
 }
