@@ -213,7 +213,7 @@ Desc.Fit.prototype.getStats = function() {
 						this.dogmaContext, m.key, ATTR_MISSILEVELOCITY);
 					var flightTime = getChargeAttribute(
 						this.dogmaContext, m.key, ATTR_FLIGHTTIME);
-					var range = missileVelocity * flightTime / 1000;
+					var range = missileVelocity * flightTime / 1000000;
 					stats.range = {missileRange: range};
 				} else if (e === EFFECT_TARGETATTACK || e === EFFECT_PROJECTILEFIRED) {
 					var multiplier = getModuleAttribute(
