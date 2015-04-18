@@ -14,4 +14,29 @@ if (Meteor.isServer) {
       return false;
     }
   });
+
+  Meteor.methods({
+    'addFitting': function(fitting) {
+      check(fitting, String);
+      Desc.init();
+
+      var parse = Desc.ParseEFT(fitting);
+      var fit = Desc.FromParse(parse);
+      var stats = fit.getStats();
+      var fleet = new Desc.Fleet();
+      fleet.setSquadCommander(Desc.getStandardLinks1());
+      fleet.setWingCommander(Desc.getStandardLinks2());
+      fleet.addFit(fit);
+      var statsLinked = fit.getStats();
+
+
+      var dbEntry = {subtitle: "", difficulty: "", role: "", description: "",
+                      tips: [], fittingDoctor: {}};
+      _.extend(dbEntry, parse);
+      dbEntry.stats = stats;
+      dbEntry.statsLinked = statsLinked;
+
+      Fittings.insert(dbEntry);
+    }
+  });
 }

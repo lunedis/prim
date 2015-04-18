@@ -57,7 +57,7 @@
 						{{/ifEmpty}}
 						</span>
 					</p>
-					{{#with fit}}
+					{{#with loadout}}
 						{{>loadout}}
 					{{/with}}
 				</div>
@@ -132,28 +132,44 @@
 		<td>{{formatNumber stats.speed}} m/s ({{formatNumber statsLinked.speed}} m/s)</td>
 	</tr>
 	<tr>
+		<td><img src="img/fourier/sig.png" class="statsIcon" alt="Signature Icon"/> Signature:</td>
+		<td>{{formatNumber stats.sigRadius}} m ({{formatNumber statsLinked.sigRadius}} m)</td>
+	</tr>
+	<tr>
 		<td><img src="img/fourier/dps.png" class="statsIcon" alt="Doomsday Device"/> DPS:</td>
 		<td>{{formatNumber stats.dps}}</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/range.png" class="statsIconSmall" alt="Range"/> &nbsp;Range:</td>
-		<td>{{stats.range}} km</td>
+		<td>
+		{{#with stats.range}}
+			{{#if optimal}}
+				{{formatNumber optimal}}+{{formatNumber falloff}} km
+			{{else}}
+				{{#if missileRange}}
+					&lt;{{formatNumber missileRange}} km
+				{{else}}
+					{{formatNumber droneControLRange}} km
+				{{/if}}
+			{{/if}}
+		{{/with}}
+		</td>
 	</tr>
 </table>		
 </template>
 
 <template name="eft">
-<pre>[{{shipTypeName}}, MiG]{{#each fit.lows}}
+<pre>[{{shipTypeName}}, MiG]{{#each loadout.lows}}
 {{typeName}}{{/each}}
-{{#each fit.mids}}
+{{#each loadout.mids}}
 {{typeName}}{{/each}}
-{{#each fit.highs}}
+{{#each loadout.highs}}
 {{typeName}}{{/each}}
-{{#each fit.rigs}}
+{{#each loadout.rigs}}
 {{typeName}}{{/each}}
-{{#each fit.drones}}
+{{#each loadout.drones}}
 {{typeName}} x{{quantity}}{{/each}}
-{{#each fit.charges}}
+{{#each loadout.charges}}
 {{typeName}} x{{quantity}}{{/each}}
 </pre>
 </template>

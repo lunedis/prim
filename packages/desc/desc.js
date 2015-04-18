@@ -230,8 +230,8 @@ Desc.Fit.prototype.getStats = function() {
 					stats.dps += dps;
 					stats.turretDPS += dps;
 
-					stats.range = {optimal: effectAttributes.range,
-									falloff: effectAttributes.falloff};
+					stats.range = {optimal: effectAttributes.range / 1000,
+									falloff: effectAttributes.falloff / 1000};
 				}
 			}
 			
@@ -264,7 +264,7 @@ Desc.Fit.prototype.getStats = function() {
 	};
 
 	if(stats.droneDPS > stats.turretDPS && stats.droneDPS > stats.missileDPS) {
-		var droneControlRange = getCharacterAttribute(this.dogmaContext, ATTR_DRONECONTROLRANGE);
+		var droneControlRange = getCharacterAttribute(this.dogmaContext, ATTR_DRONECONTROLRANGE) / 1000;
 		stats.range = {droneControlRange: droneControlRange};
 	}
 
@@ -289,7 +289,7 @@ Desc.Fleet.prototype.addFit = function(f) {
 		this.fleetContext, 0, 0, f.dogmaContext) === DOGMA.OK) {
 		this.fits.push(f);
 	} else {
-		console.log("Error adding fit to fleet");
+		throw new Meteor.Error(500,"Error adding fit to fleet");
 	}
 }
 Desc.Fleet.prototype.setSquadCommander = function(f) {
@@ -297,7 +297,7 @@ Desc.Fleet.prototype.setSquadCommander = function(f) {
 		this.fleetContext, 0, 0, f.dogmaContext) === DOGMA.OK) {
 		this.squadCommander = f;
 	} else {
-		console.log("Error setting fleet to commander");
+		throw new Meteor.Error(500,"Error setting fleet to commander");
 	}
 }
 Desc.Fleet.prototype.setWingCommander = function(f) {
@@ -305,14 +305,15 @@ Desc.Fleet.prototype.setWingCommander = function(f) {
 		this.fleetContext, 0, f.dogmaContext) === DOGMA.OK) {
 		this.wingCommander = f;
 	} else {
-		console.log("Error setting fleet to commander");
+		throw new Meteor.Error(500,"Error setting fleet to commander");
 	}
 }
 
 Desc.ParseEFT = function(fitting) {
 	var parse = {};
-	parse.drones = [];
-	parse.charges = [];
+	parse.loadout = {};
+	parse.loadout.drones = [];
+	parse.loadout.charges = [];
 
 	var racks = [[],[],[],[],[]];
 	var currentRack = 0;
@@ -340,14 +341,14 @@ Desc.ParseEFT = function(fitting) {
 				parse.shipTypeID = id;
 				parse.shipTypeName = m[1];
 			} else {
-				console.log("Error reading ship");
+				throw new Meteor.Error(500, "Error reading ship");
 			}
 		} else if((m = droneRegex.exec(l)) !== null) {
 			var id;
 			if(id = lookupDrone(m[1])) {
-				parse.drones.push({typeID: id, typeName: m[1], quantity: m[2]});
+				parse.loadout.drones.push({typeID: id, typeName: m[1], quantity: m[2]});
 			} else if(id = lookupCharge(m[1])) {
-				parse.charges.push({typeID: id, typeName: m[1], quantity: m[2]});
+				parse.loadout.charges.push({typeID: id, typeName: m[1], quantity: m[2]});
 			}
 		} else if((m = moduleRegex.exec(l)) !== null) {
 			var idModule;
@@ -359,7 +360,7 @@ Desc.ParseEFT = function(fitting) {
 											chargeID: idCharge, chargeName: m[3]});
 						moduleCount++;
 					} else {
-						console.log("Error reading module");
+						throw new Meteor.Error(500, "Error reading module");
 					}
 				} else {
 					racks[currentRack].push({typeID: idModule, typeName: m[1]});
@@ -370,11 +371,11 @@ Desc.ParseEFT = function(fitting) {
 		}
 	}
 
-	parse.lows = racks[0];
-	parse.mids = racks[1];
-	parse.highs = racks[2];
-	parse.rigs = racks[3];
-	parse.subs = racks[4];
+	parse.loadout.lows = racks[0];
+	parse.loadout.mids = racks[1];
+	parse.loadout.highs = racks[2];
+	parse.loadout.rigs = racks[3];
+	parse.loadout.subs = racks[4];
 	return parse;
 }
 
@@ -389,13 +390,13 @@ Desc.FromParse = function(parse) {
 			f.addModule(m.typeID);
 		}
 	}
-	parse.highs.forEach(addModule);
-	parse.mids.forEach(addModule);
-	parse.lows.forEach(addModule);
-	parse.rigs.forEach(addModule);
-	parse.subs.forEach(addModule);
+	parse.loadout.highs.forEach(addModule);
+	parse.loadout.mids.forEach(addModule);
+	parse.loadout.lows.forEach(addModule);
+	parse.loadout.rigs.forEach(addModule);
+	parse.loadout.subs.forEach(addModule);
 	
-	parse.drones.forEach(function(d) {
+	parse.loadout.drones.forEach(function(d) {
 		f.addDrone(d.typeID, d.quantity);
 	});
 	return f;
