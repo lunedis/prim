@@ -210,6 +210,10 @@ DogmaContext.prototype.addDrone = function(drone, count) {
 	return (libdogma.dogma_add_drone(this.internalContext, drone, count) === DOGMA.OK);
 }
 
+DogmaContext.prototype.removeDrone = function(drone, count) {
+	return (libdogma.dogma_remove_drone_partial(this.internalContext, drone, count) === DOGMA.OK);
+}
+
 typeHasEffect = function(module, state, effect) {
 	var boolVal = ref.alloc(ref.types.bool);
 	if(libdogma.dogma_type_has_effect(module, state, effect, boolVal) === DOGMA.OK) {

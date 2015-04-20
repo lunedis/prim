@@ -6,7 +6,7 @@ Desc.Fit = function() {
 	this.dogmaContext = new DogmaContext();
 	this.ship = 0;
 	this.modules = [];
-	this.drones = [];
+	this.drones = {usedBandwith:0, active:0, inSpace:[], inBay: []};
 	this.implants = [];
 }
 Desc.Fit.prototype.setShip = function(s) {
@@ -41,10 +41,43 @@ Desc.Fit.prototype.addModuleWithCharge = function(module, charge) {
 	}
 }
 Desc.Fit.prototype.addDrone = function(drone, count) {
-	if(this.dogmaContext.addDrone(drone, count)) {
-		var d = {"typeID": drone, "count": count}
-		this.drones.push(d);
+	if(count == 0) return;
+
+	var ATTR_DRONEBANDWITH = 1271;
+	var ATTR_DRONEBANDWITHUSED = 1272;
+	var ATTR_MAXACTIVEDRONES = 352;
+
+	this.dogmaContext.addDrone(drone, 1);
+	var bandwith = this.dogmaContext.getDroneAttribute(drone, ATTR_DRONEBANDWITHUSED);
+	console.log("bandwidth: " + bandwith);
+	this.dogmaContext.removeDrone(drone, 1);
+
+	var availableBandwith = this.dogmaContext.getShipAttribute(ATTR_DRONEBANDWITH) - this.drones.usedBandwith;
+	var availableDrones = this.dogmaContext.getCharacterAttribute(ATTR_MAXACTIVEDRONES) - this.drones.active;
+
+	var droneCountBW = Math.min(Math.floor(availableBandwith / bandwith), count);
+	var droneCountDrones = Math.min(availableDrones, count);
+
+	var toBeAdded = Math.min(droneCountBW, droneCountDrones);
+
+	console.log("availableBandwith: " + availableBandwith);
+	console.log("availableDrones: " + availableDrones);
+	console.log("droneCountBW: " + droneCountBW);
+	console.log("droneCountDrones: " + droneCountDrones);
+	console.log("toBeAdded: " + toBeAdded);
+
+	if(toBeAdded > 0) {
+		var d = {typeID: drone, count: toBeAdded};
+		this.dogmaContext.addDrone(drone, toBeAdded);
+		this.drones.inSpace.push(d);
+		this.drones.active += toBeAdded;
+		this.drones.usedBandwith += bandwith * count;
 	}
+	if((count - toBeAdded) > 0) {
+		var d = {typeID: drone, count: count-toBeAdded};
+		this.drones.inBay.push(d);
+	}
+	console.log(this.drones);
 }
 Desc.Fit.prototype.getStats = function() {
 	var ATTR_MISSILEDAMAGEMULTIPLIER = 212;
@@ -146,8 +179,8 @@ Desc.Fit.prototype.getStats = function() {
 		}
 	}
 
-	for (var i = this.drones.length - 1; i >= 0; i--) {
-		var d = this.drones[i];
+	for (var i = this.drones.inSpace.length - 1; i >= 0; i--) {
+		var d = this.drones.inSpace[i];
 		var e = EFFECT_TARGETATTACK;
 		if(typeHasEffect(d.typeID, DOGMA.STATE_Active, e)) {
 			
