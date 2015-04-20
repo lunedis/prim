@@ -89,7 +89,7 @@ var dogma_simple_capacitor_tPtrPtr = ref.refType(dogma_simple_capacitor_tPtr);
 var doublePtr = ref.refType(ref.types.double);
 var boolPtr = ref.refType(ref.types.bool);
 
-libdogma = ffi.Library('libdogma', {
+var libdogma = ffi.Library('libdogma', {
 	'dogma_init': ['int', [] ],
 	'dogma_init_context': ['int', [dogma_context_tPtrPtr]],
 	'dogma_free_context': ['int', [dogma_context_tPtr]],
@@ -207,7 +207,7 @@ DogmaContext.prototype.addModuleWithCharge = function(module, state, charge) {
 }
 
 DogmaContext.prototype.addDrone = function(drone, count) {
-	return (libdogma.add_drone(this.internalContext, drone, count) === DOGMA.OK);
+	return (libdogma.dogma_add_drone(this.internalContext, drone, count) === DOGMA.OK);
 }
 
 typeHasEffect = function(module, state, effect) {
@@ -251,11 +251,9 @@ DogmaContext.prototype.getLocationEffectAttributes = function(location, key, eff
 }
 
 function getGenericAttribute(f) {
-	console.log(arguments);
 	var args = Array.prototype.slice.call(arguments,1);
 	var doubleVal = ref.alloc(ref.types.double);
 	args.push(doubleVal);
-	console.log(args);
 	if(f.apply(null, args) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
@@ -279,8 +277,28 @@ DogmaContext.prototype.getDroneAttribute = function(drone, attribute) {
 	return getGenericAttribute(libdogma.dogma_get_drone_attribute, this.internalContext, drone, attribute);
 }
 
-getFleetContext = function() {
+FleetContext = function() {
 	var fleetContextPtrPtr = ref.alloc(dogma_fleet_context_tPtrPtr);
 	assert(libdogma.dogma_init_context(fleetContextPtrPtr) === DOGMA.OK);
-	return fleetContextPtrPtr.deref();
+	this.internalContext = fleetContextPtrPtr.deref();
+}
+
+FleetContext.prototype.addSquadMember = function(squad, wing, context) {
+	return (libdogma.dogma_add_squad_member(
+		this.internalContext, squad, wing, context.internalContext) === DOGMA.OK);
+}
+
+FleetContext.prototype.addSquadCommander = function(squad, wing, context) {
+	return (libdogma.dogma_add_squad_commander(
+		this.internalContext, squad, wing, context.internalContext) === DOGMA.OK);
+}
+
+FleetContext.prototype.addWingCommander = function(wing, context) {
+	return (libdogma.dogma_add_wing_commander(
+		this.internalContext, wing, context.internalContext) === DOGMA.OK);
+}
+
+FleetContext.prototype.addFleetCommander = function(context) {
+	return (libdogma.dogma_add_fleet_commander(
+		this.internalContext, context.internalContext) === DOGMA.OK);
 }

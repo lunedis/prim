@@ -185,30 +185,30 @@ Desc.Fit.prototype.getStats = function() {
 }
 
 Desc.Fleet = function() {
-	this.fleetContext = getFleetContext();
+	this.fleetContext = new FleetContext();
 	this.squadCommander = null;
 	this.wingCommander = null;
 	this.fits = [];
 }
 Desc.Fleet.prototype.addFit = function(f) {
-	if(libdogma.dogma_add_squad_member(
-		this.fleetContext, 0, 0, f.dogmaContext.internalContext) === DOGMA.OK) {
+	if(this.fleetContext.addSquadMember(
+		0, 0, f.dogmaContext)) {
 		this.fits.push(f);
 	} else {
 		throw new Meteor.Error(500,"Error adding fit to fleet");
 	}
 }
 Desc.Fleet.prototype.setSquadCommander = function(f) {
-	if(libdogma.dogma_add_squad_commander(
-		this.fleetContext, 0, 0, f.dogmaContext.internalContext) === DOGMA.OK) {
+	if(this.fleetContext.addSquadCommander(
+		0, 0, f.dogmaContext)) {
 		this.squadCommander = f;
 	} else {
 		throw new Meteor.Error(500,"Error setting fleet to commander");
 	}
 }
 Desc.Fleet.prototype.setWingCommander = function(f) {
-	if(libdogma.dogma_add_wing_commander(
-		this.fleetContext, 0, f.dogmaContext.internalContext) === DOGMA.OK) {
+	if(this.fleetContext.addWingCommander(
+		0, f.dogmaContext)) {
 		this.wingCommander = f;
 	} else {
 		throw new Meteor.Error(500,"Error setting fleet to commander");
