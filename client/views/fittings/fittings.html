@@ -1,16 +1,26 @@
 <template name="fittings">
 <div class="row" id="scrollspy">
 	<div class="col-sm-9">
+	{{#each roles}}
+		<h2 id="{{role}}">{{role}}</h2>
 		{{#each fits}}
 			{{>fit}}
 		{{/each}}
+	{{/each}}
 	</div>
 	<div class="col-sm-3">
 		<nav id="fit-nav">
-			<ul class="nav nav-pills nav-stacked" data-spy="affix">
-			{{#each fits}}
-				<li>
-					<a href="#fit{{_id}}">{{shipTypeName}} - <small>{{subtitle}}</small></a>
+			<ul class="nav" data-spy="affix">
+			{{#each roles}}
+				<li class="role">
+					<a href="#{{role}}"><i class="glyphicon glyphicon-menu-down"></i> {{role}}</a>
+					<ul class="nav" data-spy="affix">
+					{{#each fits}}
+						<li class="fit">
+							<a href="#fit{{_id}}"><i class="glyphicon glyphicon-menu-right"></i> {{shipTypeName}}</a>
+						</li>
+					{{/each}}
+					</ul>
 				</li>
 			{{/each}}
 			</ul>
@@ -32,10 +42,10 @@
 <div class="row fit" id="fit{{_id}}">
 	<div class="col-sm-3">
 		<img class="center-block img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{shipTypeID}}_128.png"/>
-		<p class="h3 text-center">{{role}}</p>
+		<p class="text-center"><span class="label label-default">{{role}}</span></p>
 	</div>
 	<div class="col-sm-9">
-		<h2>{{shipTypeName}} <small>{{subtitle}}</small></h2>
+		<h3>{{shipTypeName}} <small>{{subtitle}}</small></h3>
 		<div class="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
 				{{>tab id=_id href="info" icon="info-sign" title="Info" class="active"}}
@@ -190,7 +200,7 @@
 
 <template name="fittingDoctor">
 {{#if cpu}}
-<h5>CPU</h5>
+<h4>CPU</h4>
 	<ul>
 	{{#each cpu}}
 		<li>
@@ -201,7 +211,7 @@
 {{/if}}
 
 {{#if powergrid}}
-<h5>Powergrid</h5>
+<h4>Powergrid</h4>
 	<ul>
 	{{#each powergrid}}
 		<li>
@@ -212,7 +222,7 @@
 {{/if}}
 
 {{#if other}}
-<h5>Other</h5>
+<h4>Other</h4>
 	<ul>
 	{{#each other}}
 		<li>

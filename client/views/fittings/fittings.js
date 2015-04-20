@@ -1,5 +1,3 @@
-Meteor.subscribe('fittings');
-
 UI.registerHelper('formatNumber', function(context, options) {
 	if(context) {
 		return context.toFixed(0).replace(/\d(?=(\d{3})+$)/g, '$&,');
@@ -19,8 +17,14 @@ Template['fittings'].rendered = function() {
 }
 
 Template['fittings'].helpers({
-	fits: function() {
-		return Fittings.find({});
+	roles: function() {
+		var fittings = _.sortBy(Fittings.find({}).fetch(),'shipTypeName');
+		var grouped = _.groupBy(fittings, 'role');
+		var result = [];
+		_.each(grouped, function(value, key, list) {
+			result.push({"role": key, "fits": value});
+		});
+		return _.sortBy(result,'role');
 	},
 	filled: function(modules) {
 		return (modules.length > 0);

@@ -7,12 +7,36 @@ body {
 	width:263px;
 }
 
+#fit-nav li.role > a {
+	font-size: large;
+}
+
+#fit-nav li.role > a i {
+	visibility:hidden;
+}
+
+#fit-nav li.role.active > a i {
+	visibility: visible;
+}
+
+#fit-nav li.fit {
+	margin-left: 15px;
+}
+
+#fit-nav li.fit > a i {
+	visibility:hidden;
+}
+
+#fit-nav li.fit.active > a i {
+	visibility: visible;
+}
+
 .img-fit {
 	margin-top: 25px;
 	margin-bottom: 10px;
 
 }
-.fit h2 {
+div.fit h2 {
 	border-bottom: 1px solid #454545;
 }
 .statsIcon {
