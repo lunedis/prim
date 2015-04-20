@@ -185,9 +185,7 @@ Desc.Fit.prototype.getStats = function() {
 }
 
 Desc.Fleet = function() {
-	var fleetContextPtrPtr = ref.alloc(dogma_fleet_context_tPtrPtr);
-	libdogma.dogma_init_context(fleetContextPtrPtr);
-	this.fleetContext = fleetContextPtrPtr.deref();
+	this.fleetContext = getFleetContext();
 	this.squadCommander = null;
 	this.wingCommander = null;
 	this.fits = [];
