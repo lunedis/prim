@@ -1,139 +1,47 @@
-function typeHasEffect(module, state, effect) {
-	var boolVal = ref.alloc(ref.types.bool);
-	if(libdogma.dogma_type_has_effect(module, state, effect, boolVal) === DOGMA.OK) {
-		return boolVal.deref();
-	} else {
-		// Error
-		console.log("Error");
-	}
-}
-function getLocationEffectAttributes(context, location, key, effect) {
-	var duration = ref.alloc(ref.types.double);
-	var tracking = ref.alloc(ref.types.double);
-	var discharge = ref.alloc(ref.types.double);
-	var range = ref.alloc(ref.types.double);
-	var falloff = ref.alloc(ref.types.double);
-	var usageChance = ref.alloc(ref.types.double);
-
-	var attributes = {};
-
-	var loc = new dogma_location_t;
-	loc.type = location;
-	loc.index = key;
-
-	if(libdogma.dogma_get_location_effect_attributes(
-		context, loc, effect,
-		duration, tracking, discharge,
-		range, falloff, usageChance) === DOGMA.OK) {
-
-		attributes.duration = duration.deref();
-		attributes.tracking = tracking.deref();
-		attributes.discharge = discharge.deref();
-		attributes.range = range.deref();
-		attributes.falloff = falloff.deref();
-		attributes.usageChance = usageChance.deref();
-	} else {
-		console.log("Error");
-	}
-	return attributes;
-}
-function getShipAttribute(context, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_ship_attribute(context, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error getting ship attribute");
-		return 0.0;
-	}
-}
-function getCharacterAttribute(context, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_character_attribute(context, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error getting character attribute");
-		return 0.0;
-	}
-}
-function getModuleAttribute(context, key, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_module_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error'getting module attribute");
-		return 0.0;
-	}
-}
-function getChargeAttribute(context, key, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_charge_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error getting charge attribute");
-		return 0.0;
-	}
-}
-function getDroneAttribute(context, drone, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_drone_attribute(context, drone, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error getting drone attribute");
-		return 0.0;
-	}
-}
-
-function assert(x) {
-	if(!x) throw "assert";
-}
-
 Desc = {};
 Desc.init = function() {
-	libdogma.dogma_init();
+	init();
 }
 Desc.Fit = function() {
-	var contextPtrPtr = ref.alloc(dogma_context_tPtrPtr);
-	assert(libdogma.dogma_init_context(contextPtrPtr) === DOGMA.OK);
-	this.dogmaContext = contextPtrPtr.deref();
+	this.dogmaContext = getContext();
 	this.ship = 0;
 	this.modules = [];
 	this.drones = [];
 	this.implants = [];
 }
 Desc.Fit.prototype.setShip = function(s) {
-	if(libdogma.dogma_set_ship(this.dogmaContext, s) === DOGMA.OK) {
+	if(setShip(this.dogmaContext, s)) {
 		this.ship = s;
 	}
 }
 Desc.Fit.prototype.addImplant = function (implant) {
-	var keyPtr = ref.alloc(dogma_key_t);
-	if(libdogma.dogma_add_implant(this.dogmaContext, implant, keyPtr) === DOGMA.OK) {
-		var key = keyPtr.deref();
+	var key;
+	if(key = addImplant(this.dogmaContext, implant)) {
 		var i = {"implant": implant, "key": key};
 		this.implants.push(i);
 		return key;
+	} else {
+		//Error
 	}
 }
 Desc.Fit.prototype.addModule = function(module) {
-	var keyPtr = ref.alloc(dogma_key_t);
-	if(libdogma.dogma_add_module_s(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active) === DOGMA.OK) {
-		var key = keyPtr.deref();
+	var key;
+	if(key = addModule(this.dogmaContext, module, DOGMA.STATE_Active)) {
 		var m = {"key": key, "module": module, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
 	}
 }
 Desc.Fit.prototype.addModuleWithCharge = function(module, charge) {
-	var keyPtr = ref.alloc(dogma_key_t);
-	if(libdogma.dogma_add_module_sc(this.dogmaContext, module, keyPtr, DOGMA.STATE_Active, charge) === DOGMA.OK) {
-		var key = keyPtr.deref();
+	var key;
+	if(key = addModuleWithCharge(this.dogmaContext, module, DOGMA.STATE_Active, charge)) {
 		var m = {"key": key, "module": module, "charge": charge, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
 	}
 }
 Desc.Fit.prototype.addDrone = function(drone, count) {
-	if(libdogma.dogma_add_drone(this.dogmaContext, drone, count) === DOGMA.OK) {
+	if(addDrone(this.dogmaContext, drone, count)) {
 		var d = {"typeID": drone, "count": count}
 		this.drones.push(d);
 	}
@@ -278,7 +186,7 @@ Desc.Fit.prototype.getStats = function() {
 
 Desc.Fleet = function() {
 	var fleetContextPtrPtr = ref.alloc(dogma_fleet_context_tPtrPtr);
-	assert(libdogma.dogma_init_context(fleetContextPtrPtr) === DOGMA.OK);
+	libdogma.dogma_init_context(fleetContextPtrPtr);
 	this.fleetContext = fleetContextPtrPtr.deref();
 	this.squadCommander = null;
 	this.wingCommander = null;

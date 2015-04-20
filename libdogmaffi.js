@@ -157,3 +157,140 @@ libdogma = ffi.Library('libdogma', {
 	'dogma_get_nth_type_effect_with_attributes': ['int', [dogma_typeid_t, ref.types.uint, ref.refType(dogma_effectid_t)]],
 	'dogma_get_location_effect_attributes': ['int', [dogma_context_tPtr, dogma_location_t, dogma_effectid_t, doublePtr, doublePtr, doublePtr, doublePtr, doublePtr, doublePtr]]
 });
+
+init = function() {
+	libdogma.dogma_init();
+}
+
+function assert(x) {
+	if(!x) throw "assert";
+}
+
+getContext = function() {
+	var contextPtrPtr = ref.alloc(dogma_context_tPtrPtr);
+	assert(libdogma.dogma_init_context(contextPtrPtr) === DOGMA.OK);
+	return contextPtrPtr.deref();	
+}
+
+setShip = function(context, ship) {
+	return (libdogma.dogma_set_ship(context, ship) === DOGMA.OK);
+}
+
+function genericAdd(f) {
+	var keyPtr = ref.alloc(dogma_key_t);
+
+	var args = Array.prototype.slice.call(arguments,1);
+
+	for(var i = 0; i < args.length; i++) {
+		if(args[i] === "Key") {
+			args[i] = keyPtr;
+		}
+	}
+
+	if(f.apply(null, args) === DOGMA.OK) {
+		return keyPtr.deref();
+	} else {
+		return false;
+	}
+}
+
+addImplant = function(context, implant) {
+	return genericAdd(libdogma.dogma_add_implant, context, implant, "Key");
+}
+
+addModule = function(context, module, state) {
+	return genericAdd(libdogma.dogma_add_module_s, context, module, "Key", state);
+}
+
+addModuleWithCharge = function(context, module, state, charge) {
+	return genericAdd(libdogma.dogma_add_module_sc, context, module, "Key", state, charge);
+}
+
+addDrone = function(context, drone, count) {
+	return (libdogma.add_drone(context, drone, count) === DOGMA.OK);
+}
+
+typeHasEffect = function(module, state, effect) {
+	var boolVal = ref.alloc(ref.types.bool);
+	if(libdogma.dogma_type_has_effect(module, state, effect, boolVal) === DOGMA.OK) {
+		return boolVal.deref();
+	} else {
+		// Error
+		console.log("Error");
+	}
+}
+getLocationEffectAttributes = function(context, location, key, effect) {
+	var duration = ref.alloc(ref.types.double);
+	var tracking = ref.alloc(ref.types.double);
+	var discharge = ref.alloc(ref.types.double);
+	var range = ref.alloc(ref.types.double);
+	var falloff = ref.alloc(ref.types.double);
+	var usageChance = ref.alloc(ref.types.double);
+
+	var attributes = {};
+
+	var loc = new dogma_location_t;
+	loc.type = location;
+	loc.index = key;
+
+	if(libdogma.dogma_get_location_effect_attributes(
+		context, loc, effect,
+		duration, tracking, discharge,
+		range, falloff, usageChance) === DOGMA.OK) {
+
+		attributes.duration = duration.deref();
+		attributes.tracking = tracking.deref();
+		attributes.discharge = discharge.deref();
+		attributes.range = range.deref();
+		attributes.falloff = falloff.deref();
+		attributes.usageChance = usageChance.deref();
+	} else {
+		console.log("Error");
+	}
+	return attributes;
+}
+getShipAttribute = function(context, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_ship_attribute(context, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error getting ship attribute");
+		return 0.0;
+	}
+}
+getCharacterAttribute = function(context, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_character_attribute(context, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error getting character attribute");
+		return 0.0;
+	}
+}
+getModuleAttribute = function(context, key, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_module_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error'getting module attribute");
+		return 0.0;
+	}
+}
+getChargeAttribute = function(context, key, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_charge_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error getting charge attribute");
+		return 0.0;
+	}
+}
+getDroneAttribute = function(context, drone, attribute) {
+	var doubleVal = ref.alloc(ref.types.double);
+	if(libdogma.dogma_get_drone_attribute(context, drone, attribute, doubleVal) === DOGMA.OK) {
+		return doubleVal.deref();
+	} else {
+		console.log("Error getting drone attribute");
+		return 0.0;
+	}
+}
