@@ -36,7 +36,8 @@ if (Meteor.isServer) {
       dbEntry.stats = stats;
       dbEntry.statsLinked = statsLinked;
 
-      Fittings.insert(dbEntry);
+      console.log(dbEntry);
+      //Fittings.insert(dbEntry);
     }
   });
 }
