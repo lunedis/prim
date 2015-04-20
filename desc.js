@@ -3,20 +3,20 @@ Desc.init = function() {
 	init();
 }
 Desc.Fit = function() {
-	this.dogmaContext = getContext();
+	this.dogmaContext = new DogmaContext();
 	this.ship = 0;
 	this.modules = [];
 	this.drones = [];
 	this.implants = [];
 }
 Desc.Fit.prototype.setShip = function(s) {
-	if(setShip(this.dogmaContext, s)) {
+	if(this.dogmaContext.setShip(s)) {
 		this.ship = s;
 	}
 }
 Desc.Fit.prototype.addImplant = function (implant) {
 	var key;
-	if(key = addImplant(this.dogmaContext, implant)) {
+	if(key = this.dogmaContext.addImplant(implant)) {
 		var i = {"implant": implant, "key": key};
 		this.implants.push(i);
 		return key;
@@ -26,7 +26,7 @@ Desc.Fit.prototype.addImplant = function (implant) {
 }
 Desc.Fit.prototype.addModule = function(module) {
 	var key;
-	if(key = addModule(this.dogmaContext, module, DOGMA.STATE_Active)) {
+	if(key = this.dogmaContext.addModule(module, DOGMA.STATE_Active)) {
 		var m = {"key": key, "module": module, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
@@ -34,14 +34,14 @@ Desc.Fit.prototype.addModule = function(module) {
 }
 Desc.Fit.prototype.addModuleWithCharge = function(module, charge) {
 	var key;
-	if(key = addModuleWithCharge(this.dogmaContext, module, DOGMA.STATE_Active, charge)) {
+	if(key = this.dogmaContext.addModuleWithCharge(module, DOGMA.STATE_Active, charge)) {
 		var m = {"key": key, "module": module, "charge": charge, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
 	}
 }
 Desc.Fit.prototype.addDrone = function(drone, count) {
-	if(addDrone(this.dogmaContext, drone, count)) {
+	if(this.dogmaContext.addDrone(drone, count)) {
 		var d = {"typeID": drone, "count": count}
 		this.drones.push(d);
 	}
@@ -69,7 +69,7 @@ Desc.Fit.prototype.getStats = function() {
 	var attrIDs = [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265, 37, 552];
 	var attr = [];
 	for(var i = 0; i < attrIDs.length; ++i) {
-		attr[attrIDs[i]] = getShipAttribute(this.dogmaContext, attrIDs[i]);
+		attr[attrIDs[i]] = this.dogmaContext.getShipAttribute(attrIDs[i]);
 	}
 	
 	var resihull = 1 / ((attr[109] + attr[110] + attr[111] + attr[113]) / 4);
@@ -95,45 +95,45 @@ Desc.Fit.prototype.getStats = function() {
 		for (var j = effects.length - 1; j >= 0; j--) {
 			var e = effects[j];
 			if(typeHasEffect(m.module, m.state, e)) {
-				var effectAttributes = getLocationEffectAttributes(
-					this.dogmaContext, DOGMA.LOC_Module, m.key, e);
+				var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
+					DOGMA.LOC_Module, m.key, e);
 
 				if(effectAttributes.duration < 1e-300)
 					continue;
 
 				if(e === EFFECT_MISSILES) {
-					var multiplier = getCharacterAttribute(
-						this.dogmaContext, ATTR_MISSILEDAMAGEMULTIPLIER);
-					var emDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_EMDAMAGE);
-					var explosiveDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_EXPLOSIVEDAMAGE);
-					var kineticDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_KINETICDAMAGE);
-					var thermalDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_THERMALDAMAGE);
+					var multiplier = this.dogmaContext.getCharacterAttribute(
+						ATTR_MISSILEDAMAGEMULTIPLIER);
+					var emDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_EMDAMAGE);
+					var explosiveDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_EXPLOSIVEDAMAGE);
+					var kineticDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_KINETICDAMAGE);
+					var thermalDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_THERMALDAMAGE);
 
 					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
 					stats.dps += dps;
 					stats.missileDPS += dps;
 
-					var missileVelocity = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_MISSILEVELOCITY);
-					var flightTime = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_FLIGHTTIME);
+					var missileVelocity = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_MISSILEVELOCITY);
+					var flightTime = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_FLIGHTTIME);
 					var range = missileVelocity * flightTime / 1000000;
 					stats.range = {missileRange: range};
 				} else if (e === EFFECT_TARGETATTACK || e === EFFECT_PROJECTILEFIRED) {
-					var multiplier = getModuleAttribute(
-						this.dogmaContext, m.key, ATTR_DAMAGEMULTIPLIER);
-					var emDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_EMDAMAGE);
-					var explosiveDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_EXPLOSIVEDAMAGE);
-					var kineticDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_KINETICDAMAGE);
-					var thermalDamage = getChargeAttribute(
-						this.dogmaContext, m.key, ATTR_THERMALDAMAGE);
+					var multiplier = this.dogmaContext.getModuleAttribute(
+						m.key, ATTR_DAMAGEMULTIPLIER);
+					var emDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_EMDAMAGE);
+					var explosiveDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_EXPLOSIVEDAMAGE);
+					var kineticDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_KINETICDAMAGE);
+					var thermalDamage = this.dogmaContext.getChargeAttribute(
+						m.key, ATTR_THERMALDAMAGE);
 					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
 					stats.dps += dps;
 					stats.turretDPS += dps;
@@ -151,19 +151,19 @@ Desc.Fit.prototype.getStats = function() {
 		var e = EFFECT_TARGETATTACK;
 		if(typeHasEffect(d.typeID, DOGMA.STATE_Active, e)) {
 			
-			var effectAttributes = getLocationEffectAttributes(
-				this.dogmaContext, DOGMA.LOC_Drone, d.typeID, e);
+			var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
+				DOGMA.LOC_Drone, d.typeID, e);
 
-			var multiplier = getDroneAttribute(
-				this.dogmaContext, d.typeID, ATTR_DAMAGEMULTIPLIER);
-			var emDamage = getDroneAttribute(
-				this.dogmaContext, d.typeID, ATTR_EMDAMAGE);
-			var explosiveDamage = getDroneAttribute(
-				this.dogmaContext, d.typeID, ATTR_EXPLOSIVEDAMAGE);
-			var kineticDamage = getDroneAttribute(
-				this.dogmaContext, d.typeID, ATTR_KINETICDAMAGE);
-			var thermalDamage = getDroneAttribute(
-				this.dogmaContext, d.typeID, ATTR_THERMALDAMAGE);
+			var multiplier = this.dogmaContext.getDroneAttribute(
+				d.typeID, ATTR_DAMAGEMULTIPLIER);
+			var emDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, ATTR_EMDAMAGE);
+			var explosiveDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, ATTR_EXPLOSIVEDAMAGE);
+			var kineticDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, ATTR_KINETICDAMAGE);
+			var thermalDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, ATTR_THERMALDAMAGE);
 			var dps = ((multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration) * d.count;
 			stats.dps += dps;
 			stats.droneDPS += dps;
@@ -172,7 +172,7 @@ Desc.Fit.prototype.getStats = function() {
 	};
 
 	if(stats.droneDPS > stats.turretDPS && stats.droneDPS > stats.missileDPS) {
-		var droneControlRange = getCharacterAttribute(this.dogmaContext, ATTR_DRONECONTROLRANGE) / 1000;
+		var droneControlRange = this.dogmaContext.getCharacterAttribute(ATTR_DRONECONTROLRANGE) / 1000;
 		stats.range = {droneControlRange: droneControlRange};
 	}
 
@@ -192,7 +192,7 @@ Desc.Fleet = function() {
 }
 Desc.Fleet.prototype.addFit = function(f) {
 	if(libdogma.dogma_add_squad_member(
-		this.fleetContext, 0, 0, f.dogmaContext) === DOGMA.OK) {
+		this.fleetContext, 0, 0, f.dogmaContext.internalContext) === DOGMA.OK) {
 		this.fits.push(f);
 	} else {
 		throw new Meteor.Error(500,"Error adding fit to fleet");
@@ -200,7 +200,7 @@ Desc.Fleet.prototype.addFit = function(f) {
 }
 Desc.Fleet.prototype.setSquadCommander = function(f) {
 	if(libdogma.dogma_add_squad_commander(
-		this.fleetContext, 0, 0, f.dogmaContext) === DOGMA.OK) {
+		this.fleetContext, 0, 0, f.dogmaContext.internalContext) === DOGMA.OK) {
 		this.squadCommander = f;
 	} else {
 		throw new Meteor.Error(500,"Error setting fleet to commander");
@@ -208,7 +208,7 @@ Desc.Fleet.prototype.setSquadCommander = function(f) {
 }
 Desc.Fleet.prototype.setWingCommander = function(f) {
 	if(libdogma.dogma_add_wing_commander(
-		this.fleetContext, 0, f.dogmaContext) === DOGMA.OK) {
+		this.fleetContext, 0, f.dogmaContext.internalContext) === DOGMA.OK) {
 		this.wingCommander = f;
 	} else {
 		throw new Meteor.Error(500,"Error setting fleet to commander");
