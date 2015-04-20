@@ -47,11 +47,12 @@ Desc.Fit.prototype.addDrone = function(drone, count) {
 	var ATTR_DRONEBANDWITHUSED = 1272;
 	var ATTR_MAXACTIVEDRONES = 352;
 
+	// add and remove drone in space so we can get bandwith
 	this.dogmaContext.addDrone(drone, 1);
 	var bandwith = this.dogmaContext.getDroneAttribute(drone, ATTR_DRONEBANDWITHUSED);
-	console.log("bandwidth: " + bandwith);
 	this.dogmaContext.removeDrone(drone, 1);
 
+	// calculate how many drones we can add (limited by count and bandwith)
 	var availableBandwith = this.dogmaContext.getShipAttribute(ATTR_DRONEBANDWITH) - this.drones.usedBandwith;
 	var availableDrones = this.dogmaContext.getCharacterAttribute(ATTR_MAXACTIVEDRONES) - this.drones.active;
 
@@ -60,12 +61,7 @@ Desc.Fit.prototype.addDrone = function(drone, count) {
 
 	var toBeAdded = Math.min(droneCountBW, droneCountDrones);
 
-	console.log("availableBandwith: " + availableBandwith);
-	console.log("availableDrones: " + availableDrones);
-	console.log("droneCountBW: " + droneCountBW);
-	console.log("droneCountDrones: " + droneCountDrones);
-	console.log("toBeAdded: " + toBeAdded);
-
+	// add drones in space
 	if(toBeAdded > 0) {
 		var d = {typeID: drone, count: toBeAdded};
 		this.dogmaContext.addDrone(drone, toBeAdded);
@@ -73,11 +69,11 @@ Desc.Fit.prototype.addDrone = function(drone, count) {
 		this.drones.active += toBeAdded;
 		this.drones.usedBandwith += bandwith * count;
 	}
+	// add drones in bay
 	if((count - toBeAdded) > 0) {
 		var d = {typeID: drone, count: count-toBeAdded};
 		this.drones.inBay.push(d);
 	}
-	console.log(this.drones);
 }
 Desc.Fit.prototype.getStats = function() {
 	var ATTR_MISSILEDAMAGEMULTIPLIER = 212;
