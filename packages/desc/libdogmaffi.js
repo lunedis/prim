@@ -166,14 +166,14 @@ function assert(x) {
 	if(!x) throw "assert";
 }
 
-getContext = function() {
+DogmaContext = function() {
 	var contextPtrPtr = ref.alloc(dogma_context_tPtrPtr);
 	assert(libdogma.dogma_init_context(contextPtrPtr) === DOGMA.OK);
-	return contextPtrPtr.deref();	
+	this.internalContext = contextPtrPtr.deref();	
 }
 
-setShip = function(context, ship) {
-	return (libdogma.dogma_set_ship(context, ship) === DOGMA.OK);
+DogmaContext.prototype.setShip = function(ship) {
+	return (libdogma.dogma_set_ship(this.internalContext, ship) === DOGMA.OK);
 }
 
 function genericAdd(f) {
@@ -194,20 +194,20 @@ function genericAdd(f) {
 	}
 }
 
-addImplant = function(context, implant) {
-	return genericAdd(libdogma.dogma_add_implant, context, implant, "Key");
+DogmaContext.prototype.addImplant = function(implant) {
+	return genericAdd(libdogma.dogma_add_implant, this.internalContext, implant, "Key");
 }
 
-addModule = function(context, module, state) {
-	return genericAdd(libdogma.dogma_add_module_s, context, module, "Key", state);
+DogmaContext.prototype.addModule = function(module, state) {
+	return genericAdd(libdogma.dogma_add_module_s, this.internalContext, module, "Key", state);
 }
 
-addModuleWithCharge = function(context, module, state, charge) {
-	return genericAdd(libdogma.dogma_add_module_sc, context, module, "Key", state, charge);
+DogmaContext.prototype.addModuleWithCharge = function(module, state, charge) {
+	return genericAdd(libdogma.dogma_add_module_sc, this.internalContext, module, "Key", state, charge);
 }
 
-addDrone = function(context, drone, count) {
-	return (libdogma.add_drone(context, drone, count) === DOGMA.OK);
+DogmaContext.prototype.addDrone = function(drone, count) {
+	return (libdogma.add_drone(this.internalContext, drone, count) === DOGMA.OK);
 }
 
 typeHasEffect = function(module, state, effect) {
@@ -219,7 +219,7 @@ typeHasEffect = function(module, state, effect) {
 		console.log("Error");
 	}
 }
-getLocationEffectAttributes = function(context, location, key, effect) {
+DogmaContext.prototype.getLocationEffectAttributes = function(location, key, effect) {
 	var duration = ref.alloc(ref.types.double);
 	var tracking = ref.alloc(ref.types.double);
 	var discharge = ref.alloc(ref.types.double);
@@ -234,7 +234,7 @@ getLocationEffectAttributes = function(context, location, key, effect) {
 	loc.index = key;
 
 	if(libdogma.dogma_get_location_effect_attributes(
-		context, loc, effect,
+		this.internalContext, loc, effect,
 		duration, tracking, discharge,
 		range, falloff, usageChance) === DOGMA.OK) {
 
@@ -249,50 +249,34 @@ getLocationEffectAttributes = function(context, location, key, effect) {
 	}
 	return attributes;
 }
-getShipAttribute = function(context, attribute) {
+
+function getGenericAttribute(f) {
+	console.log(arguments);
+	var args = Array.prototype.slice.call(arguments,1);
 	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_ship_attribute(context, attribute, doubleVal) === DOGMA.OK) {
+	args.push(doubleVal);
+	console.log(args);
+	if(f.apply(null, args) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
-		console.log("Error getting ship attribute");
-		return 0.0;
+		// Error
+		return false;
 	}
 }
-getCharacterAttribute = function(context, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_character_attribute(context, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error getting character attribute");
-		return 0.0;
-	}
+DogmaContext.prototype.getShipAttribute = function(attribute) {
+	return getGenericAttribute(libdogma.dogma_get_ship_attribute, this.internalContext, attribute);
 }
-getModuleAttribute = function(context, key, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_module_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error'getting module attribute");
-		return 0.0;
-	}
+DogmaContext.prototype.getCharacterAttribute = function(attribute) {
+	return getGenericAttribute(libdogma.dogma_get_character_attribute, this.internalContext, attribute);
 }
-getChargeAttribute = function(context, key, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_charge_attribute(context, key, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error getting charge attribute");
-		return 0.0;
-	}
+DogmaContext.prototype.getModuleAttribute = function(key, attribute) {
+	return getGenericAttribute(libdogma.dogma_get_module_attribute, this.internalContext, key, attribute);
 }
-getDroneAttribute = function(context, drone, attribute) {
-	var doubleVal = ref.alloc(ref.types.double);
-	if(libdogma.dogma_get_drone_attribute(context, drone, attribute, doubleVal) === DOGMA.OK) {
-		return doubleVal.deref();
-	} else {
-		console.log("Error getting drone attribute");
-		return 0.0;
-	}
+DogmaContext.prototype.getChargeAttribute = function(key, attribute) {
+	return getGenericAttribute(libdogma.dogma_get_charge_attribute, this.internalContext, key, attribute);
+}
+DogmaContext.prototype.getDroneAttribute = function(drone, attribute) {
+	return getGenericAttribute(libdogma.dogma_get_drone_attribute, this.internalContext, drone, attribute);
 }
 
 getFleetContext = function() {
