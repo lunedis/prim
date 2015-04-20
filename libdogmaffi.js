@@ -1,18 +1,18 @@
 var ffi = Npm.require('ffi');
-ref = Npm.require ('ref');
+var ref = Npm.require ('ref');
 var Union = Npm.require('ref-union');;
 var StructType = Npm.require('ref-struct');
 
-dogma_array_t = ref.types.void;
-dogma_key_t = ref.types.uint32;
-dogma_typeid_t = ref.types.uint32;
-dogma_attributeid_t = ref.types.uint16;
-dogma_effectid_t = ref.types.int32;
+var dogma_array_t = ref.types.void;
+var dogma_key_t = ref.types.uint32;
+var dogma_typeid_t = ref.types.uint32;
+var dogma_attributeid_t = ref.types.uint16;
+var dogma_effectid_t = ref.types.int32;
 
-dogma_key_tPtr = ref.refType(dogma_key_t);
+var dogma_key_tPtr = ref.refType(dogma_key_t);
 
-dogma_location_type_e = ref.types.int;
-dogma_location_type_s = ref.types.int;
+var dogma_location_type_e = ref.types.int;
+var dogma_location_type_s = ref.types.int;
 
 DOGMA = {
 	OK: 0,
@@ -33,7 +33,7 @@ DOGMA = {
 	STATE_Active: 31,
 	STATE_Overloaded: 63 
 };
-dogma_state_t = ref.types.int;
+var dogma_state_t = ref.types.int;
 
 /*var location_union = new Union({
 	implant_index: dogma_key_t,
@@ -47,12 +47,12 @@ var dogma_location_t = StructType({
 	location: location_union
 });*/
 
-dogma_location_t = StructType({
+var dogma_location_t = StructType({
 	type: dogma_location_type_e,
 	index: dogma_key_t
 });
 
-dogma_simple_affector_t = StructType({
+var dogma_simple_affector_t = StructType({
 	id: dogma_typeid_t,
 	destid: dogma_attributeid_t,
 
@@ -62,32 +62,32 @@ dogma_simple_affector_t = StructType({
 	order: ref.types.uint8,
 	flags: ref.types.uint8
 });
-dogma_simple_affector_tPtr = ref.refType(dogma_simple_affector_t);
-dogma_simple_affector_tPtrPtr = ref.refType(dogma_simple_affector_tPtr);
+var dogma_simple_affector_tPtr = ref.refType(dogma_simple_affector_t);
+var dogma_simple_affector_tPtrPtr = ref.refType(dogma_simple_affector_tPtr);
 
-dogma_context_t = StructType({});
-dogma_context_tPtr = ref.refType(dogma_context_t);
-dogma_context_tPtrPtr = ref.refType(dogma_context_tPtr);
-dogma_fleet_context_t = StructType({});
-dogma_fleet_context_tPtr = ref.refType(dogma_fleet_context_t);
-dogma_fleet_context_tPtrPtr = ref.refType(dogma_fleet_context_t);
+var dogma_context_t = StructType({});
+var dogma_context_tPtr = ref.refType(dogma_context_t);
+var dogma_context_tPtrPtr = ref.refType(dogma_context_tPtr);
+var dogma_fleet_context_t = StructType({});
+var dogma_fleet_context_tPtr = ref.refType(dogma_fleet_context_t);
+var dogma_fleet_context_tPtrPtr = ref.refType(dogma_fleet_context_t);
 
-capacitor_union = new Union({
+var capacitor_union = new Union({
 	stable_fraction: ref.types.double,
 	depletion_time: ref.types.double
 });
-dogma_simple_capacitor_t = new StructType({
+var dogma_simple_capacitor_t = new StructType({
 	context: dogma_context_tPtr,
 	capacity: ref.types.double,
 	delta: ref.types.double,
 	stable: ref.types.bool,
 	info: capacitor_union
 });
-dogma_simple_capacitor_tPtr = ref.refType(dogma_simple_capacitor_t);
-dogma_simple_capacitor_tPtrPtr = ref.refType(dogma_simple_capacitor_tPtr);
+var dogma_simple_capacitor_tPtr = ref.refType(dogma_simple_capacitor_t);
+var dogma_simple_capacitor_tPtrPtr = ref.refType(dogma_simple_capacitor_tPtr);
 
-doublePtr = ref.refType(ref.types.double);
-boolPtr = ref.refType(ref.types.bool);
+var doublePtr = ref.refType(ref.types.double);
+var boolPtr = ref.refType(ref.types.bool);
 
 libdogma = ffi.Library('libdogma', {
 	'dogma_init': ['int', [] ],
@@ -293,4 +293,10 @@ getDroneAttribute = function(context, drone, attribute) {
 		console.log("Error getting drone attribute");
 		return 0.0;
 	}
+}
+
+getFleetContext = function() {
+	var fleetContextPtrPtr = ref.alloc(dogma_fleet_context_tPtrPtr);
+	assert(libdogma.dogma_init_context(fleetContextPtrPtr) === DOGMA.OK);
+	return fleetContextPtrPtr.deref();
 }
