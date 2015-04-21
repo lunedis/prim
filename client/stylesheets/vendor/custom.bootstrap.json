@@ -47,5 +47,5 @@
   "transition":           false,
 
   "utilities":            true,
-  "responsive-utilities": false
+  "responsive-utilities": true
 }}

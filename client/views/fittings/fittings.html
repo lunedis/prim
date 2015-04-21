@@ -1,6 +1,6 @@
 <template name="fittings">
 <div class="row" id="scrollspy">
-	<div class="col-sm-9">
+	<div class="col-md-9">
 	{{#each roles}}
 		<h2 id="{{role}}">{{role}}</h2>
 		{{#each fits}}
@@ -8,13 +8,13 @@
 		{{/each}}
 	{{/each}}
 	</div>
-	<div class="col-sm-3">
+	<div class="col-md-3">
 		<nav id="fit-nav">
-			<ul class="nav" data-spy="affix">
+			<ul class="nav hidden-xs hidden-sm" data-spy="affix">
 			{{#each roles}}
 				<li class="role">
 					<a href="#{{role}}"><i class="glyphicon glyphicon-menu-down"></i> {{role}}</a>
-					<ul class="nav" data-spy="affix">
+					<ul class="nav">
 					{{#each fits}}
 						<li class="fit">
 							<a href="#fit{{_id}}"><i class="glyphicon glyphicon-menu-right"></i> {{shipTypeName}}</a>
