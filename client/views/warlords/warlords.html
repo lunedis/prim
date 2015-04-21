@@ -9,6 +9,8 @@
 		{{> warlord}}
 	{{/each}}
 </div>
+<h2>Add new Warlord</h2>
+{{>AddWarlord}}
 </template>
 
 <template name="warlord">
@@ -22,4 +24,8 @@
 		</div>
 	</div>
 </div>
+</template>
+
+<template name="AddWarlord">
+  {{> quickForm collection="Warlords" id="addWarlord" type="insert"}}
 </template>

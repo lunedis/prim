@@ -3,19 +3,23 @@ Warlords = new Mongo.Collection('warlords');
 Warlords.attachSchema(
 	new SimpleSchema({
 	characterID: {
-		type: String
+		type: Number,
+		min: 0,
+		label: "CharacterID"
 	},
 	characterName: {
-		type: String
+		type: String,
+		label: "Character Name",
+		max: 100
 	},
 	corporationName: {
-		type: String
-	},
-	joinDate: {
-		type: Date
+		type: String,
+		label: "Corporation Name",
+		max: 100
 	},
 	comment: {
-		type: String
+		type: String,
+		label: "Comment"
 	}
 	})
 );
@@ -25,10 +29,10 @@ Warlords.attachSchema(
 if (Meteor.isServer) {
 	Warlords.allow({
 		insert : function () {
-			return false;
+			return true;
 		},
 		update : function () {
-			return false;
+			return true;
 		},
 		remove : function () {
 			return false;
