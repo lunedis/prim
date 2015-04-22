@@ -1,4 +1,12 @@
 <template name="fittings-edit">
 	<h3>Edit: {{fit.shipTypeName}}</h3>
-	{{> quickForm collection="Fittings" doc=fit id="editFit" type="update"}}
+	{{> quickForm collection="Fittings" doc=fit id="editFittingForm" type="update"}}
+    {{#with fit}}
+     <p>
+		<button id="delete" class="btn btn-warning">
+			<i class="glyphicon glyphicon-warning-sign"></i>
+			Delete
+		</button>
+	</p>
+	{{/with}}
 </template>

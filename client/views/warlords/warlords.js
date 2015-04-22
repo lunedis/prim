@@ -2,7 +2,7 @@ Meteor.subscribe('warlords');
 
 Template['warlords'].helpers({
 	warlords: function() {
-		return Warlords.find({});
+		return _.sortBy(Warlords.find({}).fetch(),'characterName');
 	}
 });
 

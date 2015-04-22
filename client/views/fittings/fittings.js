@@ -28,19 +28,13 @@ Template['fittings'].helpers({
 	},
 	filled: function(modules) {
 		return (modules.length > 0);
+	},
+	AddFittingsSchema: function() {
+		return AddFittingsSchema;
 	}
 });
 
 Template['fittings'].events({
-	"submit .test": function() {
-		try {
-			var text = event.target.text.value;
-			Meteor.call("addFitting", text);
-		} catch (e) {
-			throw new Meteor.Error(500,e.reason, e.details);
-		}
-		return false;
-	}
 });
 
 Template['fit'].helpers({

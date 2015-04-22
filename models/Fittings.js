@@ -5,12 +5,13 @@ Fittings.attachSchema(
   subtitle: {
     type: String,
     max: 100,
-    label: "Subtitle"
+    label: "Subtitle",
   },
   difficulty: {
     type: String,
     label: "Difficulty",
-    allowedValues: ["", "easy", "medium", "hard"]
+    allowedValues: ["", "easy", "medium", "hard"],
+    optional: true
   },
   role: {
     type: String,
@@ -19,7 +20,8 @@ Fittings.attachSchema(
   },
   description: {
     type: String,
-    label: "Description"
+    label: "Description",
+    optional: true,
   },
   shipTypeID: {
     type: Number,
@@ -107,15 +109,32 @@ Fittings.attachSchema(
   })
 );
 
+AddFittingsSchema = new SimpleSchema({
+  subtitle: {
+    type: String,
+    max: 100,
+    label: "Subtitle",
+  },
+  role: {
+    type: String,
+    label: "Role",
+    max: 50
+  },
+  eft: {
+    type: String,
+    label: "EFT",
+    autoform: {
+      rows: 5
+    }
+  }
+});
+
 // Collection2 already does schema checking
 // Add custom permission rules if needed
 if (Meteor.isServer) {
   Fittings.allow({
     insert : function () {
-      if(Meteor.user())
-        return true;
-      else
-        return false;
+      return false;
     },
     update : function () {
       if(Meteor.user())
@@ -132,11 +151,11 @@ if (Meteor.isServer) {
   });
 
   Meteor.methods({
-    'addFitting': function(fitting) {
-      check(fitting, String);
+    'addFitting': function(document) {
+      check(document, AddFittingsSchema);
       Desc.init();
 
-      var parse = Desc.ParseEFT(fitting);
+      var parse = Desc.ParseEFT(document.eft);
       var fit = Desc.FromParse(parse);
       var stats = fit.getStats();
       var fleet = new Desc.Fleet();
@@ -146,14 +165,13 @@ if (Meteor.isServer) {
       var statsLinked = fit.getStats();
 
 
-      var dbEntry = {subtitle: "", difficulty: "", role: "", description: "",
-                      tips: [], fittingDoctor: {}};
+      var dbEntry = {subtitle: document.subtitle, difficulty: "", 
+      role: document.role, description: "" };
       _.extend(dbEntry, parse);
       dbEntry.stats = stats;
       dbEntry.statsLinked = statsLinked;
-
-      console.log(dbEntry);
-      //Fittings.insert(dbEntry);
+      //console.log(dbEntry);
+      Fittings.insert(dbEntry);
     }
   });
 }

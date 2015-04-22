@@ -9,8 +9,10 @@
 		{{> warlord}}
 	{{/each}}
 </div>
-<h2>Add new Warlord</h2>
-{{>AddWarlord}}
+{{#if currentUser}}
+	<h2>Add new Warlord</h2>
+	{{>AddWarlord}}
+{{/if}}
 </template>
 
 <template name="warlord">
