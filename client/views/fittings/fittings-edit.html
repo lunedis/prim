@@ -1,3 +1,4 @@
 <template name="fittings-edit">
 	<h3>Edit: {{fit.shipTypeName}}</h3>
+	{{> quickForm collection="Fittings" doc=fit id="editFit" type="update"}}
 </template>

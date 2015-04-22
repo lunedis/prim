@@ -1,14 +1,115 @@
 Fittings = new Mongo.Collection('fittings');
 
+Fittings.attachSchema(
+  new SimpleSchema({
+  subtitle: {
+    type: String,
+    max: 100,
+    label: "Subtitle"
+  },
+  difficulty: {
+    type: String,
+    label: "Difficulty",
+    allowedValues: ["", "easy", "medium", "hard"]
+  },
+  role: {
+    type: String,
+    label: "Role",
+    max: 50
+  },
+  description: {
+    type: String,
+    label: "Description"
+  },
+  shipTypeID: {
+    type: Number,
+    label: "shipTypeID"
+  },
+  shipTypeName: {
+    type: String,
+    label: "ShipTypeName"
+  },
+  tips: {
+    type: Array,
+    label: "Tips",
+    optional: true
+  },
+  "tips.$": {
+    type: String,
+    label: "Tip",
+    optional: true
+  },
+  fittingDoctor: {
+    type: Object,
+    label: "Fitting Doctor",
+    optional: true
+  },
+  "fittingDoctor.cpu": {
+    type: Array,
+    label: "CPU",
+    optional: true
+  },
+  "fittingDoctor.cpu.$": {
+    type: String,
+    label: "Hint",
+    optional: true
+  },
+  "fittingDoctor.powergrid": {
+    type: Array,
+    label: "Powergrid",
+    optional: true
+  },
+  "fittingDoctor.powergrid.$": {
+    type: String,
+    label: "Hint",
+    optional: true
+  },
+  "fittingDoctor.else": {
+    type: Array,
+    label: "Else",
+    optional: true
+  },
+  "fittingDoctor.else.$": {
+    type: String,
+    label: "Hint",
+    optional: true
+  },
+  stats: {
+    type: Object,
+    label: "Stats",
+    blackbox: true,
+    autoform: {
+      omit: true
+    }
+  },
+  statsLinked: {
+    type: Object,
+    label: "Linked Stats",
+    blackbox: true,
+    autoform: {
+      omit: true
+    }
+  },
+  loadout: {
+    type: Object,
+    label: "Loadout",
+    blackbox: true,
+    autoform: {
+      omit: true
+    }
+  }
+  })
+);
+
 // Collection2 already does schema checking
 // Add custom permission rules if needed
 if (Meteor.isServer) {
   Fittings.allow({
     insert : function () {
-      return false;
+      return true;
     },
     update : function () {
-      return false;
+      return true;
     },
     remove : function () {
       return false;
