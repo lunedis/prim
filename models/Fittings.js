@@ -23,11 +23,17 @@ Fittings.attachSchema(
   },
   shipTypeID: {
     type: Number,
-    label: "shipTypeID"
+    label: "shipTypeID",
+    autoform: {
+      omit: true
+    }
   },
   shipTypeName: {
     type: String,
-    label: "ShipTypeName"
+    label: "ShipTypeName",
+    autoform: {
+      omit: true
+    }
   },
   tips: {
     type: Array,
@@ -106,13 +112,22 @@ Fittings.attachSchema(
 if (Meteor.isServer) {
   Fittings.allow({
     insert : function () {
-      return true;
+      if(Meteor.user())
+        return true;
+      else
+        return false;
     },
     update : function () {
-      return true;
+      if(Meteor.user())
+        return true;
+      else
+        return false;
     },
     remove : function () {
-      return false;
+      if(Meteor.user())
+        return true;
+      else
+        return false;
     }
   });
 

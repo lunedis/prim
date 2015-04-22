@@ -29,13 +29,22 @@ Warlords.attachSchema(
 if (Meteor.isServer) {
 	Warlords.allow({
 		insert : function () {
-			return true;
+			if(Meteor.user())
+        		return true;
+      		else
+    			return false;
 		},
 		update : function () {
-			return true;
+			if(Meteor.user())
+		    	return true;
+			else
+				return false;
 		},
 		remove : function () {
-			return false;
+			if(Meteor.user())
+        		return true;
+      		else
+        		return false;
 		}
 	});
 }

@@ -43,6 +43,14 @@
 	<div class="col-sm-3">
 		<img class="center-block img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{shipTypeID}}_128.png"/>
 		<p class="text-center"><span class="label label-default">{{role}}</span></p>
+		{{#if currentUser}}
+			<p class="text-center">
+				<a href="/fittings/edit/{{_id}}" class="btn btn-default">
+					<i class="glyphicon glyphicon-pencil"></i>
+					Edit
+				</a>
+			</p>
+		{{/if}}
 	</div>
 	<div class="col-sm-9">
 		<h3>{{shipTypeName}} <small>{{subtitle}}</small></h3>
