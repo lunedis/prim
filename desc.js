@@ -4,6 +4,7 @@ Desc.init = function() {
 }
 Desc.Fit = function() {
 	this.dogmaContext = new DogmaContext();
+	this.dogmaContext.setDefaultSkillLevel(5);
 	this.ship = 0;
 	this.modules = [];
 	this.drones = {usedBandwith:0, active:0, inSpace:[], inBay: []};
@@ -16,7 +17,7 @@ Desc.Fit.prototype.setShip = function(s) {
 }
 Desc.Fit.prototype.addImplant = function (implant) {
 	var key;
-	if(key = this.dogmaContext.addImplant(implant)) {
+	if((key = this.dogmaContext.addImplant(implant)) !== false) {
 		var i = {"implant": implant, "key": key};
 		this.implants.push(i);
 		return key;
@@ -26,7 +27,7 @@ Desc.Fit.prototype.addImplant = function (implant) {
 }
 Desc.Fit.prototype.addModule = function(module) {
 	var key;
-	if(key = this.dogmaContext.addModule(module, DOGMA.STATE_Active)) {
+	if((key = this.dogmaContext.addModule(module, DOGMA.STATE_Active)) !== false) {
 		var m = {"key": key, "module": module, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
@@ -34,10 +35,12 @@ Desc.Fit.prototype.addModule = function(module) {
 }
 Desc.Fit.prototype.addModuleWithCharge = function(module, charge) {
 	var key;
-	if(key = this.dogmaContext.addModuleWithCharge(module, DOGMA.STATE_Active, charge)) {
+	if((key = this.dogmaContext.addModuleWithCharge(module, DOGMA.STATE_Active, charge)) !== false) {
 		var m = {"key": key, "module": module, "charge": charge, "state": DOGMA.STATE_Active};
 		this.modules.push(m);
 		return key;
+	} else {
+		console.log('Error adding module with charge');
 	}
 }
 Desc.Fit.prototype.addDrone = function(drone, count) {
@@ -118,10 +121,10 @@ Desc.Fit.prototype.getStats = function() {
 	stats.turretDPS = 0;
 	stats.droneDPS = 0;
 	var effects = [EFFECT_MISSILES, EFFECT_PROJECTILEFIRED, EFFECT_TARGETATTACK];
-	for (var i = this.modules.length - 1; i >= 0; i--) {
+	for (var i = 0; i < this.modules.length; i++) {
 		var m = this.modules[i];
 
-		for (var j = effects.length - 1; j >= 0; j--) {
+		for (var j = 0; j < effects.length; j++) {
 			var e = effects[j];
 			if(typeHasEffect(m.module, m.state, e)) {
 				var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
