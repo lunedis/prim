@@ -46,7 +46,9 @@
 <div class="row fit" id="fit{{_id}}">
 	<div class="col-sm-3">
 		<img class="center-block img-rounded img-thumbnail img-fit" src="http://image.eveonline.com/Render/{{shipTypeID}}_128.png"/>
-		<p class="text-center"><span class="label label-default">{{role}}</span></p>
+		<p class="text-center">
+			<span class="label {{roleLabelColor}}">{{role}}</span>
+		</p>
 		{{#if currentUser}}
 			<p class="text-center">
 				<a href="/fittings/edit/{{_id}}" class="btn btn-default">
@@ -74,7 +76,7 @@
 					{{/ifEmpty}}
 					</p>
 					<p>
-						Difficulty: <span class="label {{labelColor}}">{{#ifEmpty difficulty}}
+						Difficulty: <span class="label {{difficultyLabelColor}}">{{#ifEmpty difficulty}}
 							unknown
 						{{/ifEmpty}}
 						</span>

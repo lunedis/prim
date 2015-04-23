@@ -36,6 +36,10 @@ body {
 
 /* Fit display */
 
+div.fit {
+	margin-top: 20px;
+}
+
 .img-fit {
 	margin-top: 25px;
 	margin-bottom: 10px;

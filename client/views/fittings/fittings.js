@@ -25,9 +25,6 @@ Template['fittings'].helpers({
 			result.push({"role": key, "fits": value});
 		});
 		return _.sortBy(result,'role');
-	},
-	filled: function(modules) {
-		return (modules.length > 0);
 	}
 });
 
@@ -35,7 +32,7 @@ Template['fittings'].events({
 });
 
 Template['fit'].helpers({
-	labelColor: function() {
+	difficultyLabelColor: function() {
 		if(this.difficulty === 'hard') {
 			return 'label-danger';
 		} else if(this.difficulty === 'easy') {
@@ -45,8 +42,17 @@ Template['fit'].helpers({
 		} else {
 			return 'label-info';
 		}
+	},
+	roleLabelColor: function() {
+		if(this.role === 'DPS') {
+			return 'label-danger';
+		} else if(this.role === 'Tackle') {
+			return 'label-warning';
+		} else {
+			return 'label-info';
+		}
 	}
-})
+});
 
 Template['rackSmall'].helpers({
 	filled: function(modules) {
