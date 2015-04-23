@@ -4,7 +4,7 @@ var Union = Npm.require('ref-union');;
 var StructType = Npm.require('ref-struct');
 
 var dogma_array_t = ref.types.void;
-var dogma_key_t = ref.types.uint32;
+var dogma_key_t = ref.types.ulong;
 var dogma_typeid_t = ref.types.uint32;
 var dogma_attributeid_t = ref.types.uint16;
 var dogma_effectid_t = ref.types.int32;
