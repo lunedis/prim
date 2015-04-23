@@ -172,6 +172,10 @@ DogmaContext = function() {
 	this.internalContext = contextPtrPtr.deref();	
 }
 
+DogmaContext.prototype.setDefaultSkillLevel = function(level) {
+	return (libdogma.dogma_set_default_skill_level(this.internalContext, level) === DOGMA.OK);
+}
+
 DogmaContext.prototype.setShip = function(ship) {
 	return (libdogma.dogma_set_ship(this.internalContext, ship) === DOGMA.OK);
 }
@@ -190,6 +194,7 @@ function genericAdd(f) {
 	if(f.apply(null, args) === DOGMA.OK) {
 		return keyPtr.deref();
 	} else {
+		console.log("error in generic add");
 		return false;
 	}
 }

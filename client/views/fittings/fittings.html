@@ -184,19 +184,21 @@
 
 <template name="eft">
 <pre>[{{shipTypeName}}, MiG]{{#each loadout.lows}}
-{{typeName}}{{/each}}
+{{>eftModule}}{{/each}}
 {{#each loadout.mids}}
-{{typeName}}{{/each}}
+{{>eftModule}}{{/each}}
 {{#each loadout.highs}}
-{{typeName}}{{/each}}
+{{>eftModule}}{{/each}}
 {{#each loadout.rigs}}
-{{typeName}}{{/each}}
+{{>eftModule}}{{/each}}
 {{#each loadout.drones}}
 {{typeName}} x{{quantity}}{{/each}}
 {{#each loadout.charges}}
 {{typeName}} x{{quantity}}{{/each}}
 </pre>
 </template>
+
+<template name="eftModule">{{typeName}}{{#if chargeName}}, {{chargeName}}{{/if}}</template>
 
 <template name="tips">
 {{#if tips}}
