@@ -15,7 +15,7 @@
 	</div>
 
 	<div class="col-md-3">
-		{{>fitnav}}
+		{{>fitnav roles}}
 	</div>
 </div>
 {{#if currentUser}}
@@ -26,7 +26,7 @@
 <template name="fitnav">
 <nav id="fit-nav">
 	<ul class="nav hidden-xs hidden-sm" data-spy="affix">
-	{{#each roles}}
+	{{#each this}}
 		<li class="role">
 			<a href="#{{role}}"><i class="glyphicon glyphicon-menu-down"></i> {{role}}</a>
 			<ul class="nav">
@@ -109,7 +109,7 @@
 </template>
 
 <template name="loadout">
-<div class="fitting">
+<div class="loadout">
 	<p class="h3 text-center">Loadout</p>
 	<div class="racks">
 		{{>rack name="HIGH" modules=highs}}
@@ -254,10 +254,16 @@
 </template>
 
 <template name="addFitting">
-<h2>Add new Fit</h2>
 <div class="row">
-	<div class="col-md-9">
-		{{> quickForm id="addFittingForm" schema=AddFittingsSchema type="method" meteormethod="addFitting"}}
+	<div class="col-md-8 col-md-offset-1">
+		<div class="panel panel-default addFittingPanel">
+			<div class="panel-heading">
+				<h3 class="panel-title">Add new Fitting</h3>
+			</div>
+			<div class="panel-body">
+				{{> quickForm id="addFittingForm" schema=AddFittingsSchema type="method" meteormethod="addFitting"}}
+			</div>
+		</div>
 	</div>
 </div>
 </template>

@@ -36,6 +36,16 @@
 </template>
 
 <template name="AddWarlord">
-	<h2>Add new Warlord</h2>
-	{{> quickForm collection="Warlords" id="addWarlord" type="insert"}}
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<div class="panel panel-default addWarlordPanel">
+			<div class="panel-heading">
+				<h3 class="panel-title">Add new Warlord</h3>
+			</div>
+			<div class="panel-body">
+				{{> quickForm collection="Warlords" id="addWarlord" type="insert"}}
+			</div>
+		</div>
+	</div>
+</div>
 </template>
