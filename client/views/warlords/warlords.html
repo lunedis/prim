@@ -10,7 +10,6 @@
 	{{/each}}
 </div>
 {{#if currentUser}}
-	<h2>Add new Warlord</h2>
 	{{>AddWarlord}}
 {{/if}}
 </template>
@@ -37,5 +36,6 @@
 </template>
 
 <template name="AddWarlord">
-  {{> quickForm collection="Warlords" id="addWarlord" type="insert"}}
+	<h2>Add new Warlord</h2>
+	{{> quickForm collection="Warlords" id="addWarlord" type="insert"}}
 </template>

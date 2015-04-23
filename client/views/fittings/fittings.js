@@ -28,9 +28,6 @@ Template['fittings'].helpers({
 	},
 	filled: function(modules) {
 		return (modules.length > 0);
-	},
-	AddFittingsSchema: function() {
-		return AddFittingsSchema;
 	}
 });
 
@@ -54,5 +51,11 @@ Template['fit'].helpers({
 Template['rackSmall'].helpers({
 	filled: function(modules) {
 		return (modules.length > 0);
+	}
+});
+
+Template['addFitting'].helpers({
+	AddFittingsSchema: function() {
+		return AddFittingsSchema;
 	}
 });

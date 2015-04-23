@@ -1,5 +1,10 @@
 <template name="fittings">
 <div class="row" id="scrollspy">
+	<div class="page-header">
+		<h1>
+			Fittings
+		</h1>
+	</div>
 	<div class="col-md-9">
 	{{#each roles}}
 		<h2 id="{{role}}">{{role}}</h2>
@@ -8,33 +13,33 @@
 		{{/each}}
 	{{/each}}
 	</div>
+
 	<div class="col-md-3">
-		<nav id="fit-nav">
-			<ul class="nav hidden-xs hidden-sm" data-spy="affix">
-			{{#each roles}}
-				<li class="role">
-					<a href="#{{role}}"><i class="glyphicon glyphicon-menu-down"></i> {{role}}</a>
-					<ul class="nav">
-					{{#each fits}}
-						<li class="fit">
-							<a href="#fit{{_id}}"><i class="glyphicon glyphicon-menu-right"></i> {{shipTypeName}}</a>
-						</li>
-					{{/each}}
-					</ul>
-				</li>
-			{{/each}}
-			</ul>
-		</nav>
+		{{>fitnav}}
 	</div>
 </div>
 {{#if currentUser}}
-<h2>Add new Fit</h2>
-<div class="row">
-	<div class="col-md-9">
-	{{> quickForm id="addFittingForm" schema=AddFittingsSchema type="method" meteormethod="addFitting"}}
-</div
-></div>
+	{{>addFitting}}
 {{/if}}
+</template>
+
+<template name="fitnav">
+<nav id="fit-nav">
+	<ul class="nav hidden-xs hidden-sm" data-spy="affix">
+	{{#each roles}}
+		<li class="role">
+			<a href="#{{role}}"><i class="glyphicon glyphicon-menu-down"></i> {{role}}</a>
+			<ul class="nav">
+			{{#each fits}}
+				<li class="fit">
+					<a href="#fit{{_id}}"><i class="glyphicon glyphicon-menu-right"></i> {{shipTypeName}}</a>
+				</li>
+			{{/each}}
+			</ul>
+		</li>
+	{{/each}}
+	</ul>
+</nav>
 </template>
 
 <template name="fit">
@@ -246,4 +251,13 @@
 	{{else}}
 		{{> Template.contentBlock}}
 	{{/if}}
+</template>
+
+<template name="addFitting">
+<h2>Add new Fit</h2>
+<div class="row">
+	<div class="col-md-9">
+		{{> quickForm id="addFittingForm" schema=AddFittingsSchema type="method" meteormethod="addFitting"}}
+	</div>
+</div>
 </template>

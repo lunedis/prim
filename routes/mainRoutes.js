@@ -35,7 +35,7 @@ Router.route('fittings/edit/:_id', {
 Router.route('warlords', {
 	action: function() {
 		this.render('warlords');
-		SEO.set({ title: 'warlords - ' + Meteor.App.NAME });
+		SEO.set({ title: 'Warlords - ' + Meteor.App.NAME });
 	},
 	waitOn: function() {
 		return Meteor.subscribe('warlords');
