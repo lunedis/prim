@@ -1,8 +1,21 @@
 # Public Roam Information Manager (prim)
 
-This boilerplate is here to give you a starting point for your meteor projects, with a console tool to ease up some tasks. Essential atmosphere packages are included to give you features like routing and collection schemas out-of-the-box.  
+Webapp running under Meteor designed to display fittings for a public roaming community.
+
+PRIM automatically calculates fitting stats using [libdogma](https://github.com/osmium-org/libdogma).
+
+## Known Issues
+* T3Ds not yet tested / implemented
+* fitting more than one propulsion modules leads to wrong speed / signature stats
+* a fitted cloak is active and reduces speed
+* /OFFLINE not supported
+* EHP calculations do not take AARs / ASBs into account
 
 ## Structure
+
+### DESC
+DESC (dogma enhanced stats calculator) is a node-ffi binding for the C library [libdogma](https://github.com/osmium-org/libdogma) and a wrapper library for easy use.
+It also includes an EFT fitting parser.
 
 ### Packages used
 
@@ -20,7 +33,9 @@ This boilerplate is here to give you a starting point for your meteor projects, 
   * [fastclick](https://github.com/meteor/meteor/tree/devel/packages/fastclick)
   * [meteorhacks:fast-render](https://github.com/meteorhacks/fast-render)
   * [natestrauser:animate-css](https://github.com/nate-strauser/meteor-animate-css/)
-  * ian:accounts-ui-bootstrap-3
+  * [nemo64:bootstrap](https://github.com/Nemo64/meteor-bootstrap/)
+  * [ian:accounts-ui-bootstrap-3](https://github.com/ianmartorell/meteor-accounts-ui-bootstrap-3/)
+  * [aldeed:autoform](https://github.com/aldeed/meteor-autoform)
 * Security
   * [browser-policy](https://github.com/meteor/meteor/tree/devel/packages/browser-policy)
   * [audit-argument-checks](https://github.com/meteor/meteor/tree/devel/packages/audit-argument-checks)
@@ -33,28 +48,6 @@ This boilerplate is here to give you a starting point for your meteor projects, 
   * [underscore](https://github.com/meteor/meteor/tree/devel/packages/underscore)
   * [raix:handlebar-helpers](https://github.com/raix/Meteor-handlebar-helpers)
 
-### Folder structure
+## Licence
 
-```
-client/ 				# Client folder
-    compatibility/      # Libraries which create a global variable
-    config/             # Configuration files (on the client)
-	lib/                # Library files that get executed first
-    startup/            # Javascript files on Meteor.startup()
-    stylesheets         # LESS files
-    modules/            # Meant for components, such as form and more(*)
-	views/			    # Contains all views(*)
-	    common/         # General purpose html templates
-model/  				# Model files, for each Meteor.Collection(*)
-private/                # Private files
-public/                 # Public files
-routes/                 # All routes(*)
-server/					# Server folder
-    fixtures/           # Meteor.Collection fixtures defined
-    lib/                # Server side library folder
-    publications/       # Collection publications(*)
-    startup/            # On server startup
-meteor-boilerplate		# Command line tool
-```
-
-PRIM is license under AGPLv3, see LICENSE.txt.
+PRIM is licensed under AGPLv3, see LICENSE.txt.
