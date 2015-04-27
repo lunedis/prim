@@ -4,8 +4,5 @@ Router.route('/', {
 		this.render('home');
   		SEO.set({ title: 'Home - ' + Meteor.App.NAME });
 	},
-	waitOn: function() {
-		return [Meteor.subscribe('fittings'), Meteor.subscribe('warlords')];
-	},
 	fastRender: true
 });

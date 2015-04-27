@@ -4,7 +4,7 @@ Router.route('fittings', {
 		SEO.set({ title: 'Fittings - ' + Meteor.App.NAME });
 	},
 	waitOn: function() {
-		return [Meteor.subscribe('fittings'), Meteor.subscribe('warlords')];
+		return Meteor.subscribe('fittings');
 	},
 	fastRender: true
 });

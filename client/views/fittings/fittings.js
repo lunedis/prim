@@ -14,7 +14,28 @@ Template['fittings'].rendered = function() {
 			top: this.$('#fit-nav').offset().top - 20
 		}
 	});
+
+	// anchor scrolling
+	var hash = document.location.hash.substr(1);
+	if (hash && !Template['fittings'].scrolled) {
+		var scroller = function() {
+			return $("html, body").stop();
+		};
+
+		Meteor.setTimeout(function() {
+			var elem = $('#'+hash);
+			if (elem.length) {
+				scroller().scrollTop(elem.offset().top);
+				// Guard against scrolling again w/ reactive changes
+				Template['fittings'].scrolled = true;
+			}
+		}, 0);
+	}
 }
+
+Template['fittings'].destroyed = function() {
+  delete Template['fittings'].scrolled;
+};
 
 Template['fittings'].helpers({
 	roles: function() {

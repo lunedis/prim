@@ -22,6 +22,6 @@ dburles:collection-helpers
 meteorhacks:fast-render
 
 nemo64:bootstrap
-ian:accounts-ui-bootstrap-3
+ian:accounts-ui-bootstrap-3@=1.2.46
 leokokim:desc
 aldeed:autoform
