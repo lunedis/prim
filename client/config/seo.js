@@ -1,6 +1,6 @@
 SEO.config({
-  title: "PolarisV3",
+  title: "PRIM",
   meta: {
-    'description': "Player Organisation, Logistics And Resource Information System v3"
+    'description': "Public Roam Information Manager"
   }
 });

@@ -180,11 +180,16 @@ DogmaContext.prototype.setShip = function(ship) {
 	return (libdogma.dogma_set_ship(this.internalContext, ship) === DOGMA.OK);
 }
 
+/**
+* Generalize AddSomethingToShip functions.
+* They all require various parameters, with one being the key variable that is getting filled and returned.
+* This function takes a libdogma function (f) and multiple parameters, where it replaces the String "Key" with the keyPtr.
+*/
 function genericAdd(f) {
 	var keyPtr = ref.alloc(dogma_key_t);
 
 	var args = Array.prototype.slice.call(arguments,1);
-
+	// Replace "Key" with the key reference.
 	for(var i = 0; i < args.length; i++) {
 		if(args[i] === "Key") {
 			args[i] = keyPtr;
@@ -198,6 +203,8 @@ function genericAdd(f) {
 		return false;
 	}
 }
+
+// call genericAdd with different functions and correct parameter ordering
 
 DogmaContext.prototype.addImplant = function(implant) {
 	return genericAdd(libdogma.dogma_add_implant, this.internalContext, implant, "Key");
@@ -259,10 +266,17 @@ DogmaContext.prototype.getLocationEffectAttributes = function(location, key, eff
 	return attributes;
 }
 
+/**
+* Generalizes the retrieval of attributes.
+* The doubleVal is always the last value and needs to be derefed.
+*/
 function getGenericAttribute(f) {
 	var args = Array.prototype.slice.call(arguments,1);
 	var doubleVal = ref.alloc(ref.types.double);
+	// push return double val to the end of the arguments
 	args.push(doubleVal);
+
+	// call specific function
 	if(f.apply(null, args) === DOGMA.OK) {
 		return doubleVal.deref();
 	} else {
