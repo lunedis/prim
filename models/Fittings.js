@@ -195,8 +195,8 @@ if (Meteor.isServer) {
       var dbEntry = {subtitle: document.subtitle, difficulty: "", 
       role: document.role, description: "" };
       _.extend(dbEntry, loadoutAndStats);
-      console.log(dbEntry);
-      //Fittings.insert(dbEntry);
+      //console.log(dbEntry);
+      Fittings.insert(dbEntry);
     },
     'updateFitting': function(modifier, documentID) {
       check(modifier, UpdateFittingsSchema);
@@ -204,11 +204,13 @@ if (Meteor.isServer) {
 
       if(typeof modifier.$set.eft) {
         var eft = modifier.$set.eft;
-        Desc.init();
-        var parse = Desc.ParseEFT(eft);
-        var fit = Desc.FromParse();
+        var loadoutAndStats = LoadoutAndStats(eft);
+
+        delete modifier.$set.eft;
+        _.extend(modifier.$set, loadoutAndStats);
       }
 
+      Fittings.update(documentID, modifier);
     }
   });
 }
