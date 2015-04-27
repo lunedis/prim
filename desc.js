@@ -46,6 +46,7 @@ Desc.Fit.prototype.addModuleWithCharge = function(module, charge) {
 Desc.Fit.prototype.addDrone = function(drone, count) {
 	if(count == 0) return;
 
+	// constants for attributeIDs
 	var ATTR_DRONEBANDWITH = 1271;
 	var ATTR_DRONEBANDWITHUSED = 1272;
 	var ATTR_MAXACTIVEDRONES = 352;
@@ -97,19 +98,22 @@ Desc.Fit.prototype.getStats = function() {
 
 	stats = {};
 
-	// Tank
+	// Tank and Navigation
 	var attrIDs = [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265, 37, 552];
 	var attr = [];
 	for(var i = 0; i < attrIDs.length; ++i) {
 		attr[attrIDs[i]] = this.dogmaContext.getShipAttribute(attrIDs[i]);
 	}
 	
+	// calculate average reciprocal (e.g. 80% equals x5)
 	var resihull = 1 / ((attr[109] + attr[110] + attr[111] + attr[113]) / 4);
 	var resiarmor = 1 / ((attr[267] + attr[268] + attr[269] + attr[270]) / 4);
 	var resishield = 1 / ((attr[271] + attr[272] + attr[273] + attr[274]) / 4);
+	// calculate ehp
 	var ehphull = attr[9] * resihull;
 	var ehparmor = attr[265] * resiarmor;
 	var ehpshield = attr[263] * resishield;
+	// sum up ehp
 	stats.ehp = ehphull + ehparmor + ehpshield;
 	
 	stats.speed = attr[37];
@@ -121,6 +125,8 @@ Desc.Fit.prototype.getStats = function() {
 	stats.turretDPS = 0;
 	stats.droneDPS = 0;
 	var effects = [EFFECT_MISSILES, EFFECT_PROJECTILEFIRED, EFFECT_TARGETATTACK];
+	
+	// Test which modules have which effects
 	for (var i = 0; i < this.modules.length; i++) {
 		var m = this.modules[i];
 
@@ -203,6 +209,7 @@ Desc.Fit.prototype.getStats = function() {
 		}
 	};
 
+	// if the ship is mostly a drone ship, use drone control range as range
 	if(stats.droneDPS > stats.turretDPS && stats.droneDPS > stats.missileDPS) {
 		var droneControlRange = this.dogmaContext.getCharacterAttribute(ATTR_DRONECONTROLRANGE) / 1000;
 		stats.range = {droneControlRange: droneControlRange};
