@@ -48,6 +48,6 @@ It also includes an EFT fitting parser.
   * [underscore](https://github.com/meteor/meteor/tree/devel/packages/underscore)
   * [raix:handlebar-helpers](https://github.com/raix/Meteor-handlebar-helpers)
 
-## Licence
+## License
 
 PRIM is licensed under AGPLv3, see LICENSE.txt.
