@@ -1,41 +1,29 @@
 Fittings = new Mongo.Collection('fittings');
 
-Fittings.attachSchema(
-  new SimpleSchema({
+mandatoryDescriptionSchema = new SimpleSchema({
   subtitle: {
     type: String,
     max: 100,
     label: "Subtitle",
   },
+  role: {
+    type: String,
+    label: "Role",
+    max: 50
+  }
+});
+
+descriptionSchema = new SimpleSchema( {
   difficulty: {
     type: String,
     label: "Difficulty",
     allowedValues: ["", "easy", "medium", "hard"],
     optional: true
   },
-  role: {
-    type: String,
-    label: "Role",
-    max: 50
-  },
   description: {
     type: String,
     label: "Description",
     optional: true,
-  },
-  shipTypeID: {
-    type: Number,
-    label: "shipTypeID",
-    autoform: {
-      omit: true
-    }
-  },
-  shipTypeName: {
-    type: String,
-    label: "ShipTypeName",
-    autoform: {
-      omit: true
-    }
   },
   tips: {
     type: Array,
@@ -82,6 +70,23 @@ Fittings.attachSchema(
     label: "Hint",
     optional: true
   },
+});
+
+loadoutSchema = new SimpleSchema({
+  shipTypeID: {
+    type: Number,
+    label: "shipTypeID",
+    autoform: {
+      omit: true
+    }
+  },
+  shipTypeName: {
+    type: String,
+    label: "ShipTypeName",
+    autoform: {
+      omit: true
+    }
+  },
   stats: {
     type: Object,
     label: "Stats",
@@ -106,21 +111,10 @@ Fittings.attachSchema(
       omit: true
     }
   }
-  })
-);
+});
 
-AddFittingsSchema = new SimpleSchema({
-  subtitle: {
-    type: String,
-    max: 100,
-    label: "Subtitle",
-  },
-  role: {
-    type: String,
-    label: "Role",
-    max: 50
-  },
-  eft: {
+eftSchema = new SimpleSchema({
+ eft: {
     type: String,
     label: "EFT",
     autoform: {
@@ -128,6 +122,30 @@ AddFittingsSchema = new SimpleSchema({
     }
   }
 });
+
+eftSchemaOptional = new SimpleSchema({
+ eft: {
+    type: String,
+    label: "EFT",
+    optional: true,
+    autoform: {
+      rows: 5
+    }
+  }
+});
+
+StoreFittingsSchema = new SimpleSchema(
+  [mandatoryDescriptionSchema, descriptionSchema, loadoutSchema]);
+
+AddFittingsSchema = new SimpleSchema(
+  [mandatoryDescriptionSchema, eftSchema]);
+
+UpdateFittingsSchema = new SimpleSchema(
+  [mandatoryDescriptionSchema, descriptionSchema, eftSchemaOptional]);
+
+Fittings.attachSchema(StoreFittingsSchema);
+
+
 
 // Collection2 already does schema checking
 // Add custom permission rules if needed
@@ -150,28 +168,47 @@ if (Meteor.isServer) {
     }
   });
 
+  function LoadoutAndStats(eft) {
+    Desc.init();
+
+    var parse = Desc.ParseEFT(eft);
+    var fit = Desc.FromParse(parse);
+    var stats = fit.getStats();
+    var fleet = new Desc.Fleet();
+    fleet.setSquadCommander(Desc.getStandardLinks1());
+    fleet.setWingCommander(Desc.getStandardLinks2());
+    fleet.addFit(fit);
+    var statsLinked = fit.getStats();
+
+    parse.stats = stats;
+    parse.statsLinked = statsLinked;
+
+    return parse;
+  }
+
   Meteor.methods({
     'addFitting': function(document) {
       check(document, AddFittingsSchema);
-      Desc.init();
 
-      var parse = Desc.ParseEFT(document.eft);
-      var fit = Desc.FromParse(parse);
-      var stats = fit.getStats();
-      var fleet = new Desc.Fleet();
-      fleet.setSquadCommander(Desc.getStandardLinks1());
-      fleet.setWingCommander(Desc.getStandardLinks2());
-      fleet.addFit(fit);
-      var statsLinked = fit.getStats();
-
+      var loadoutAndStats = LoadoutAndStats(document.eft);
 
       var dbEntry = {subtitle: document.subtitle, difficulty: "", 
       role: document.role, description: "" };
-      _.extend(dbEntry, parse);
-      dbEntry.stats = stats;
-      dbEntry.statsLinked = statsLinked;
-      //console.log(dbEntry);
-      Fittings.insert(dbEntry);
+      _.extend(dbEntry, loadoutAndStats);
+      console.log(dbEntry);
+      //Fittings.insert(dbEntry);
+    },
+    'updateFitting': function(modifier, documentID) {
+      check(modifier, UpdateFittingsSchema);
+      check(documentID, String);
+
+      if(typeof modifier.$set.eft) {
+        var eft = modifier.$set.eft;
+        Desc.init();
+        var parse = Desc.ParseEFT(eft);
+        var fit = Desc.FromParse();
+      }
+
     }
   });
 }

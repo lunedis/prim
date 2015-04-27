@@ -1,4 +1,7 @@
 Template['fittings-edit'].helpers({
+	UpdateFittingsSchema: function() {
+		return UpdateFittingsSchema;
+	}
 });
 
 Template['fittings-edit'].events({

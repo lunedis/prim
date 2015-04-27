@@ -1,6 +1,6 @@
 <template name="fittings-edit">
 	<h3>Edit: {{fit.shipTypeName}}</h3>
-	{{> quickForm collection="Fittings" doc=fit id="editFittingForm" type="update"}}
+	{{> quickForm id="editFittingForm" doc=fit schema=UpdateFittingsSchema  type="method-update" meteormethod="updateFitting"}}
     {{#with fit}}
      <p>
 		<button id="delete" class="btn btn-warning">
