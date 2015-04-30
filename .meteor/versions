@@ -67,6 +67,7 @@ observe-sequence@1.0.6
 ordered-dict@1.0.3
 prim-base@0.0.0
 prim-bootstrap@0.0.0
+prim-fittings@0.0.0
 prim-warlords@0.0.0
 raix:handlebar-helpers@0.2.4
 random@1.0.3

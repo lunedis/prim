@@ -1,5 +1,5 @@
 Template['navigation'].helpers({
 	navigation: function() {
-		return navigation;
+		return _.sortBy(navigation,'order');
 	}
 });

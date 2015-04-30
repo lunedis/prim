@@ -1,9 +1,11 @@
 Package.describe({
-  name: 'prim-warlords',
+  name: 'prim-fittings',
   summary: '',
 });
 
 Package.onUse(function(api) {
+  api.use('leokokim:desc','server');
+
   api.use([
       'prim-base',
       'iron:router', 
@@ -17,10 +19,9 @@ Package.onUse(function(api) {
       'aldeed:autoform', 'jquery','templating']
     , 'client');
 
-
   api.addFiles([
     'lib/routes.js',
-    'lib/Warlords.js',
+    'lib/Fittings.js',
     'lib/hooks.js'
     ], ['client', 'server']);
 
@@ -29,14 +30,14 @@ Package.onUse(function(api) {
     ], 'server');
 
   api.addFiles([
-    'lib/client/views/warlords.html',
-    'lib/client/views/warlords.js',
-    'lib/client/views/warlords.css',
-    'lib/client/views/warlords-edit.html',
-    'lib/client/views/warlords-edit.js',
+    'lib/client/views/fittings.html',
+    'lib/client/views/fittings.js',
+    'lib/client/views/fittings.css',
+    'lib/client/views/fittings-edit.html',
+    'lib/client/views/fittings-edit.js',
     ], 'client');
 
   api.export([
-    'Warlords'
+    'Fittings'
   ]);
 });
