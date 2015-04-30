@@ -26,7 +26,7 @@ Warlords.attachSchema(
 
 // Collection2 already does schema checking
 // Add custom permission rules if needed
-if (Meteor.isServer) {
+Meteor.startup(function() {
 	Warlords.allow({
 		insert : function () {
 			if(Meteor.user())
@@ -47,4 +47,4 @@ if (Meteor.isServer) {
         		return false;
 		}
 	});
-}
+});

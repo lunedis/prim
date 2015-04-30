@@ -5,7 +5,7 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.1.0.2');
-  api.use(['less','nemo64:bootstrap', 'jquery', 'underscore'], ['client', 'server']);
+  api.use(['less','nemo64:bootstrap'], ['client', 'server']);
   api.addFiles([
     'lib/client/stylesheets/vendor/custom.bootstrap.less',
     'lib/client/stylesheets/vendor/custom.bootstrap.import.less',
