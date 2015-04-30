@@ -5,8 +5,9 @@
 			<a href="/" class="navbar-brand">MiG</a>
 		</div>
 		<ul class="nav navbar-nav">
-			<li><a href="/fittings">Fittings</a></li>
-			<li><a href="/warlords">Warlords</a></li>
+		{{#each navigation}}
+			<li><a href="{{route}}">{{label}}</a></li>
+		{{/each}}
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
             {{> loginButtons }}

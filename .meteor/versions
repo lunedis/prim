@@ -65,6 +65,7 @@ nemo64:bootstrap-data@3.3.4_1
 npm-bcrypt@0.7.8_2
 observe-sequence@1.0.6
 ordered-dict@1.0.3
+prim-base@0.0.0
 prim-bootstrap@0.0.0
 prim-warlords@0.0.0
 raix:handlebar-helpers@0.2.4

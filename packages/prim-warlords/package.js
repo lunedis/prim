@@ -7,7 +7,11 @@ Package.onUse(function(api) {
   api.versionsFrom('1.1.0.2');
 
   api.use([
-      'iron:router', 'aldeed:collection2','meteorhacks:fast-render', 'underscore'
+      'prim-base',
+      'iron:router', 
+      'aldeed:collection2',
+      'meteorhacks:fast-render',
+      'underscore'
     ], ['client', 'server']);
 
   api.use([
@@ -17,7 +21,8 @@ Package.onUse(function(api) {
 
   api.addFiles([
     'lib/routes.js',
-    'lib/Warlords.js'
+    'lib/Warlords.js',
+    'lib/hooks.js'
     ], ['client', 'server']);
 
   api.addFiles([
