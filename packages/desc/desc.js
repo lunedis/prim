@@ -10,22 +10,39 @@ Desc.Fit = function() {
 	this.drones = {usedBandwith:0, active:0, inSpace:[], inBay: []};
 	this.implants = [];
 }
-Desc.Fit.prototype.ATTR_MISSILEDAMAGEMULTIPLIER = 212;
-Desc.Fit.prototype.ATTR_DAMAGEMULTIPLIER = 64;
+// General
 Desc.Fit.prototype.ATTR_EMDAMAGE = 114;
 Desc.Fit.prototype.ATTR_EXPLOSIVEDAMAGE = 116;
 Desc.Fit.prototype.ATTR_KINETICDAMAGE = 117;
 Desc.Fit.prototype.ATTR_THERMALDAMAGE = 118;
+
+Desc.Fit.prototype.ATTR_LOCKRANGE = 76;
+// Missiles
+Desc.Fit.prototype.ATTR_MISSILEDAMAGEMULTIPLIER = 212;
 Desc.Fit.prototype.ATTR_FLIGHTTIME = 281;
 Desc.Fit.prototype.ATTR_MISSILEVELOCITY = 37;
+Desc.Fit.prototype.ATTR_AOEVELOCITY = 653;
+Desc.Fit.prototype.ATTR_AOEClOUDSIZE = 654;
+Desc.Fit.prototype.ATTR_AOEDAMAGEREDUCTIONFACTOR = 1353;
+Desc.Fit.prototype.ATTR_AOEDAMAGEREDUCTIONSENSITIVITY = 1354;
+
+// Turrets
+Desc.Fit.prototype.ATTR_DAMAGEMULTIPLIER = 64;
+Desc.Fit.prototype.ATTR_OPTIMALSIGRADIUS = 620;
+
+
+// Drones
 Desc.Fit.prototype.ATTR_DRONECONTROLRANGE = 458;
-Desc.Fit.prototype.ATTR_LOCKRANGE = 76;
-Desc.Fit.prototype.EFFECT_TARGETATTACK = 10;
-Desc.Fit.prototype.EFFECT_PROJECTILEFIRED = 34;
-Desc.Fit.prototype.EFFECT_MISSILES = 101;
 Desc.Fit.prototype.ATTR_DRONEBANDWITH = 1271;
 Desc.Fit.prototype.ATTR_DRONEBANDWITHUSED = 1272;
 Desc.Fit.prototype.ATTR_MAXACTIVEDRONES = 352;
+Desc.Fit.prototype.ATTR_REQUIREDSKILL1 = 182;
+Desc.Fit.prototype.TYPE_SENTRYDRONEINTERFACING = 23594;
+
+// Effects
+Desc.Fit.prototype.EFFECT_TARGETATTACK = 10;
+Desc.Fit.prototype.EFFECT_PROJECTILEFIRED = 34;
+Desc.Fit.prototype.EFFECT_MISSILES = 101;
 
 Desc.Fit.prototype.setShip = function(s) {
 	if(this.dogmaContext.setShip(s)) {
@@ -254,7 +271,146 @@ Desc.Fit.prototype.getNavigation = function() {
 	return navigation;
 }
 
-Desc.Fit.prototype.getDPS = function() {
+Desc.Fit.prototype.getDamage = function() {
+	var result = {};
+
+	var effects = [this.EFFECT_MISSILES, this.EFFECT_PROJECTILEFIRED, this.EFFECT_TARGETATTACK];
+	
+	// Test which modules have which effects
+	for (var i = 0; i < this.modules.length; i++) {
+		var m = this.modules[i];
+
+		for (var j = 0; j < effects.length; j++) {
+			var e = effects[j];
+			if(typeHasEffect(m.module, m.state, e)) {
+				var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
+					DOGMA.LOC_Module, m.key, e);
+
+				if(effectAttributes.duration < 1e-300)
+					continue;
+
+				if(e === this.EFFECT_MISSILES) {
+					var multiplier = this.dogmaContext.getCharacterAttribute(
+						this.ATTR_MISSILEDAMAGEMULTIPLIER);
+					var emDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_EMDAMAGE);
+					var explosiveDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_EXPLOSIVEDAMAGE);
+					var kineticDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_KINETICDAMAGE);
+					var thermalDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_THERMALDAMAGE);
+
+					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
+					
+					if(typeof result.missile === 'undefined') {
+						result.missile = {};
+						result.missile.dps = 0;
+
+						var missileVelocity = this.dogmaContext.getChargeAttribute(
+							m.key, this.ATTR_MISSILEVELOCITY);
+						var flightTime = this.dogmaContext.getChargeAttribute(
+							m.key, this.ATTR_FLIGHTTIME);
+						var range = missileVelocity * flightTime / 1000000;
+
+						result.missile.range = range;
+
+						var explosionVelocity = this.dogmaContext.getChargeAttribute(
+							m.key, this.ATTR_AOEVELOCITY);
+						var explosionRadius = this.dogmaContext.getChargeAttribute(
+							m.key, this.ATTR_AOEClOUDSIZE);
+						var drf = this.dogmaContext.getChargeAttribute(
+							m.key, this.ATTR_AOEDAMAGEREDUCTIONFACTOR);
+
+						result.missile.explosionVelocity = explosionVelocity;
+						result.missile.explosionRadius = explosionRadius;
+						result.missile.drf = drf;
+					}
+
+					result.missile.dps += dps;
+
+				} else if (e === this.EFFECT_TARGETATTACK || e === this.EFFECT_PROJECTILEFIRED) {
+					var multiplier = this.dogmaContext.getModuleAttribute(
+						m.key, this.ATTR_DAMAGEMULTIPLIER);
+					var emDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_EMDAMAGE);
+					var explosiveDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_EXPLOSIVEDAMAGE);
+					var kineticDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_KINETICDAMAGE);
+					var thermalDamage = this.dogmaContext.getChargeAttribute(
+						m.key, this.ATTR_THERMALDAMAGE);
+					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
+					
+					if(typeof result.turret === 'undefined') {
+						result.turret = {};
+						result.turret.dps = 0;
+
+						result.turret.optimal = effectAttributes.range / 1000;
+						result.turret.falloff = effectAttributes.falloff / 1000;
+						result.turret.tracking = effectAttributes.tracking;
+
+						var sigRes = this.dogmaContext.getModuleAttribute(
+							m.key, this.ATTR_OPTIMALSIGRADIUS);
+						result.turret.signatureResolution = sigRes;
+					}
+
+					result.turret.dps += dps;
+
+				}
+			}
+			
+		}
+	}
+
+	for (var i = this.drones.inSpace.length - 1; i >= 0; i--) {
+		var d = this.drones.inSpace[i];
+		var e = this.EFFECT_TARGETATTACK;
+		if(typeHasEffect(d.typeID, DOGMA.STATE_Active, e)) {
+			
+			var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
+				DOGMA.LOC_Drone, d.typeID, e);
+
+			var multiplier = this.dogmaContext.getDroneAttribute(
+				d.typeID, this.ATTR_DAMAGEMULTIPLIER);
+			var emDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, this.ATTR_EMDAMAGE);
+			var explosiveDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, this.ATTR_EXPLOSIVEDAMAGE);
+			var kineticDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, this.ATTR_KINETICDAMAGE);
+			var thermalDamage = this.dogmaContext.getDroneAttribute(
+				d.typeID, this.ATTR_THERMALDAMAGE);
+			var dps = ((multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration) * d.count;
+			
+			// Sentry drone
+			var requiredSkill = this.dogmaContext.getDroneAttribute(
+				d.typeID, this.ATTR_REQUIREDSKILL1);
+
+			if(requiredSkill === this.TYPE_SENTRYDRONEINTERFACING) {
+				if(typeof result.sentries === 'undefined') {
+					result.sentries = {};
+					result.sentries.dps = 0;
+
+					result.sentries.optimal = effectAttributes.range / 1000;
+					result.sentries.falloff = effectAttributes.falloff / 1000;
+				}
+
+				result.sentries.dps += dps;
+			} else {
+				if(typeof result.drones === 'undefined') {
+					result.drones = {};
+					result.drones.dps = 0;
+
+					result.drones.range = this.dogmaContext.getCharacterAttribute(this.ATTR_DRONECONTROLRANGE) / 1000;
+				}
+
+				result.drones.dps += dps;
+			}
+		}
+	}
+
+	return result;
 
 }
 
