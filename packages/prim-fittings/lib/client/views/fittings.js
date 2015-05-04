@@ -1,5 +1,22 @@
 Meteor.startup(function() {
 
+	function SelectText(text) {
+	    var doc = document
+	        , range, selection
+	    ;    
+	    if (doc.body.createTextRange) {
+	        range = document.body.createTextRange();
+	        range.moveToElementText(text);
+	        range.select();
+	    } else if (window.getSelection) {
+	        selection = window.getSelection();        
+	        range = document.createRange();
+	        range.selectNodeContents(text);
+	        selection.removeAllRanges();
+	        selection.addRange(range);
+	    }
+	}
+
 	UI.registerHelper('formatNumber', function(context, options) {
 		if(context) {
 			return context.toFixed(0).replace(/\d(?=(\d{3})+$)/g, '$&,');
@@ -86,6 +103,12 @@ Meteor.startup(function() {
 			return AddFittingsSchema;
 		}
 	});
+
+	Template['eft'].events({
+		'click .eft': function(event) {
+			SelectText(event.target);
+		}
+	})
 
 		
 });
