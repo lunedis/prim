@@ -10,6 +10,23 @@ Desc.Fit = function() {
 	this.drones = {usedBandwith:0, active:0, inSpace:[], inBay: []};
 	this.implants = [];
 }
+Desc.Fit.prototype.ATTR_MISSILEDAMAGEMULTIPLIER = 212;
+Desc.Fit.prototype.ATTR_DAMAGEMULTIPLIER = 64;
+Desc.Fit.prototype.ATTR_EMDAMAGE = 114;
+Desc.Fit.prototype.ATTR_EXPLOSIVEDAMAGE = 116;
+Desc.Fit.prototype.ATTR_KINETICDAMAGE = 117;
+Desc.Fit.prototype.ATTR_THERMALDAMAGE = 118;
+Desc.Fit.prototype.ATTR_FLIGHTTIME = 281;
+Desc.Fit.prototype.ATTR_MISSILEVELOCITY = 37;
+Desc.Fit.prototype.ATTR_DRONECONTROLRANGE = 458;
+Desc.Fit.prototype.ATTR_LOCKRANGE = 76;
+Desc.Fit.prototype.EFFECT_TARGETATTACK = 10;
+Desc.Fit.prototype.EFFECT_PROJECTILEFIRED = 34;
+Desc.Fit.prototype.EFFECT_MISSILES = 101;
+Desc.Fit.prototype.ATTR_DRONEBANDWITH = 1271;
+Desc.Fit.prototype.ATTR_DRONEBANDWITHUSED = 1272;
+Desc.Fit.prototype.ATTR_MAXACTIVEDRONES = 352;
+
 Desc.Fit.prototype.setShip = function(s) {
 	if(this.dogmaContext.setShip(s)) {
 		this.ship = s;
@@ -46,19 +63,14 @@ Desc.Fit.prototype.addModuleWithCharge = function(module, charge) {
 Desc.Fit.prototype.addDrone = function(drone, count) {
 	if(count == 0) return;
 
-	// constants for attributeIDs
-	var ATTR_DRONEBANDWITH = 1271;
-	var ATTR_DRONEBANDWITHUSED = 1272;
-	var ATTR_MAXACTIVEDRONES = 352;
-
 	// add and remove drone in space so we can get bandwith
 	this.dogmaContext.addDrone(drone, 1);
-	var bandwith = this.dogmaContext.getDroneAttribute(drone, ATTR_DRONEBANDWITHUSED);
+	var bandwith = this.dogmaContext.getDroneAttribute(drone, this.ATTR_DRONEBANDWITHUSED);
 	this.dogmaContext.removeDrone(drone, 1);
 
 	// calculate how many drones we can add (limited by count and bandwith)
-	var availableBandwith = this.dogmaContext.getShipAttribute(ATTR_DRONEBANDWITH) - this.drones.usedBandwith;
-	var availableDrones = this.dogmaContext.getCharacterAttribute(ATTR_MAXACTIVEDRONES) - this.drones.active;
+	var availableBandwith = this.dogmaContext.getShipAttribute(this.ATTR_DRONEBANDWITH) - this.drones.usedBandwith;
+	var availableDrones = this.dogmaContext.getCharacterAttribute(this.ATTR_MAXACTIVEDRONES) - this.drones.active;
 
 	var droneCountBW = Math.min(Math.floor(availableBandwith / bandwith), count);
 	var droneCountDrones = Math.min(availableDrones, count);
@@ -88,19 +100,6 @@ Desc.Fit.prototype.getShipAttributes = function(attrIDs) {
 }
 
 Desc.Fit.prototype.getStats = function() {
-	var ATTR_MISSILEDAMAGEMULTIPLIER = 212;
-	var ATTR_DAMAGEMULTIPLIER = 64;
-	var ATTR_EMDAMAGE = 114;
-	var ATTR_EXPLOSIVEDAMAGE = 116;
-	var ATTR_KINETICDAMAGE = 117;
-	var ATTR_THERMALDAMAGE = 118;
-	var ATTR_FLIGHTTIME = 281;
-	var ATTR_MISSILEVELOCITY = 37;
-	var ATTR_DRONECONTROLRANGE = 458;
-	var ATTR_LOCKRANGE = 76;
-	var EFFECT_TARGETATTACK = 10;
-	var EFFECT_PROJECTILEFIRED = 34;
-	var EFFECT_MISSILES = 101;
 
 	// TODO: Smartbombs + RR
 
@@ -127,7 +126,7 @@ Desc.Fit.prototype.getStats = function() {
 	stats.missileDPS = 0;
 	stats.turretDPS = 0;
 	stats.droneDPS = 0;
-	var effects = [EFFECT_MISSILES, EFFECT_PROJECTILEFIRED, EFFECT_TARGETATTACK];
+	var effects = [this.EFFECT_MISSILES, this.EFFECT_PROJECTILEFIRED, this.EFFECT_TARGETATTACK];
 	
 	// Test which modules have which effects
 	for (var i = 0; i < this.modules.length; i++) {
@@ -142,39 +141,39 @@ Desc.Fit.prototype.getStats = function() {
 				if(effectAttributes.duration < 1e-300)
 					continue;
 
-				if(e === EFFECT_MISSILES) {
+				if(e === this.EFFECT_MISSILES) {
 					var multiplier = this.dogmaContext.getCharacterAttribute(
-						ATTR_MISSILEDAMAGEMULTIPLIER);
+						this.ATTR_MISSILEDAMAGEMULTIPLIER);
 					var emDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_EMDAMAGE);
+						m.key, this.ATTR_EMDAMAGE);
 					var explosiveDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_EXPLOSIVEDAMAGE);
+						m.key, this.ATTR_EXPLOSIVEDAMAGE);
 					var kineticDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_KINETICDAMAGE);
+						m.key, this.ATTR_KINETICDAMAGE);
 					var thermalDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_THERMALDAMAGE);
+						m.key, this.ATTR_THERMALDAMAGE);
 
 					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
 					stats.dps += dps;
 					stats.missileDPS += dps;
 
 					var missileVelocity = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_MISSILEVELOCITY);
+						m.key, this.ATTR_MISSILEVELOCITY);
 					var flightTime = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_FLIGHTTIME);
+						m.key, this.ATTR_FLIGHTTIME);
 					var range = missileVelocity * flightTime / 1000000;
 					stats.range = {missileRange: range};
-				} else if (e === EFFECT_TARGETATTACK || e === EFFECT_PROJECTILEFIRED) {
+				} else if (e === this.EFFECT_TARGETATTACK || e === this.EFFECT_PROJECTILEFIRED) {
 					var multiplier = this.dogmaContext.getModuleAttribute(
-						m.key, ATTR_DAMAGEMULTIPLIER);
+						m.key, this.ATTR_DAMAGEMULTIPLIER);
 					var emDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_EMDAMAGE);
+						m.key, this.ATTR_EMDAMAGE);
 					var explosiveDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_EXPLOSIVEDAMAGE);
+						m.key, this.ATTR_EXPLOSIVEDAMAGE);
 					var kineticDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_KINETICDAMAGE);
+						m.key, this.ATTR_KINETICDAMAGE);
 					var thermalDamage = this.dogmaContext.getChargeAttribute(
-						m.key, ATTR_THERMALDAMAGE);
+						m.key, this.ATTR_THERMALDAMAGE);
 					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
 					stats.dps += dps;
 					stats.turretDPS += dps;
@@ -189,22 +188,22 @@ Desc.Fit.prototype.getStats = function() {
 
 	for (var i = this.drones.inSpace.length - 1; i >= 0; i--) {
 		var d = this.drones.inSpace[i];
-		var e = EFFECT_TARGETATTACK;
+		var e = this.EFFECT_TARGETATTACK;
 		if(typeHasEffect(d.typeID, DOGMA.STATE_Active, e)) {
 			
 			var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
 				DOGMA.LOC_Drone, d.typeID, e);
 
 			var multiplier = this.dogmaContext.getDroneAttribute(
-				d.typeID, ATTR_DAMAGEMULTIPLIER);
+				d.typeID, this.ATTR_DAMAGEMULTIPLIER);
 			var emDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, ATTR_EMDAMAGE);
+				d.typeID, this.ATTR_EMDAMAGE);
 			var explosiveDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, ATTR_EXPLOSIVEDAMAGE);
+				d.typeID, this.ATTR_EXPLOSIVEDAMAGE);
 			var kineticDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, ATTR_KINETICDAMAGE);
+				d.typeID, this.ATTR_KINETICDAMAGE);
 			var thermalDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, ATTR_THERMALDAMAGE);
+				d.typeID, this.ATTR_THERMALDAMAGE);
 			var dps = ((multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration) * d.count;
 			stats.dps += dps;
 			stats.droneDPS += dps;
@@ -214,7 +213,7 @@ Desc.Fit.prototype.getStats = function() {
 
 	// if the ship is mostly a drone ship, use drone control range as range
 	if(stats.droneDPS > stats.turretDPS && stats.droneDPS > stats.missileDPS) {
-		var droneControlRange = this.dogmaContext.getCharacterAttribute(ATTR_DRONECONTROLRANGE) / 1000;
+		var droneControlRange = this.dogmaContext.getCharacterAttribute(this.ATTR_DRONECONTROLRANGE) / 1000;
 		stats.range = {droneControlRange: droneControlRange};
 	}
 
@@ -248,11 +247,15 @@ Desc.Fit.prototype.getTank = function() {
 Desc.Fit.prototype.getNavigation = function() {
 	// Tank and Navigation
 	var attr = this.getShipAttributes([37, 552]);
-	
+
 	var navigation = {};
 	navigation.speed = attr[37];
 	navigation.sig = attr[552];
 	return navigation;
+}
+
+Desc.Fit.prototype.getDPS = function() {
+
 }
 
 Desc.Fleet = function() {
