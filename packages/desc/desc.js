@@ -79,6 +79,14 @@ Desc.Fit.prototype.addDrone = function(drone, count) {
 		this.drones.inBay.push(d);
 	}
 }
+Desc.Fit.prototype.getShipAttributes = function(attrIDs) {
+	var attr = {};
+	for(var i = 0; i < attrIDs.length; ++i) {
+		attr[attrIDs[i]] = this.dogmaContext.getShipAttribute(attrIDs[i]);
+	}
+	return attr;
+}
+
 Desc.Fit.prototype.getStats = function() {
 	var ATTR_MISSILEDAMAGEMULTIPLIER = 212;
 	var ATTR_DAMAGEMULTIPLIER = 64;
@@ -98,12 +106,7 @@ Desc.Fit.prototype.getStats = function() {
 
 	stats = {};
 
-	// Tank and Navigation
-	var attrIDs = [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265, 37, 552];
-	var attr = [];
-	for(var i = 0; i < attrIDs.length; ++i) {
-		attr[attrIDs[i]] = this.dogmaContext.getShipAttribute(attrIDs[i]);
-	}
+	var attr = this.getShipAttributes([109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265, 37, 552]);
 	
 	// calculate average reciprocal (e.g. 80% equals x5)
 	var resihull = 1 / ((attr[109] + attr[110] + attr[111] + attr[113]) / 4);
@@ -221,6 +224,35 @@ Desc.Fit.prototype.getStats = function() {
 	stats.missileDPS *= 1000;
 
 	return stats;
+}
+
+Desc.Fit.prototype.getTank = function() {
+
+	var attr = this.getShipAttributes([109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265]);
+	
+	var tank = {};
+
+	// calculate average reciprocal (e.g. 80% equals x5)
+	tank.resihull = 1 / ((attr[109] + attr[110] + attr[111] + attr[113]) / 4);
+	tank.resiarmor = 1 / ((attr[267] + attr[268] + attr[269] + attr[270]) / 4);
+	tank.resishield = 1 / ((attr[271] + attr[272] + attr[273] + attr[274]) / 4);
+	// calculate ehp
+	tank.ehphull = attr[9] * tank.resihull;
+	tank.ehparmor = attr[265] * tank.resiarmor;
+	tank.ehpshield = attr[263] * tank.resishield;
+	// sum up ehp
+	tank.ehp = tank.ehphull + tank.ehparmor + tank.ehpshield;
+	return tank;
+}
+
+Desc.Fit.prototype.getNavigation = function() {
+	// Tank and Navigation
+	var attr = this.getShipAttributes([37, 552]);
+	
+	var navigation = {};
+	navigation.speed = attr[37];
+	navigation.sig = attr[552];
+	return navigation;
 }
 
 Desc.Fleet = function() {
