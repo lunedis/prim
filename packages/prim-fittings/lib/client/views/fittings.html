@@ -150,36 +150,44 @@
 <table class="table table-condensed">
 	<tr>
 		<td><img src="img/fourier/ehp.png" class="statsIcon" alt="Suitcase"/> EHP:</td>
-		<td>{{formatNumber stats.ehp}} ({{formatNumber statsLinked.ehp}})</td>
+		<td>{{formatNumber stats.tank.ehp}} ({{formatNumber statsLinked.tank.ehp}})</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/speed.png" class="statsIcon" alt="Propulsion Module"/> Speed:</td>
-		<td>{{formatNumber stats.speed}} m/s ({{formatNumber statsLinked.speed}} m/s)</td>
+		<td>{{formatNumber stats.navigation.speed}} m/s ({{formatNumber statsLinked.navigation.speed}} m/s)</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/sig.png" class="statsIcon" alt="Signature Icon"/> Signature:</td>
-		<td>{{formatNumber stats.sigRadius}} m ({{formatNumber statsLinked.sigRadius}} m)</td>
+		<td>{{formatNumber stats.navigation.sig}} m ({{formatNumber statsLinked.navigation.sig}} m)</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/dps.png" class="statsIcon" alt="Doomsday Device"/> DPS:</td>
-		<td>{{formatNumber stats.dps}}</td>
+		<td>{{formatNumber stats.damage.total}}</td>
 	</tr>
 	<tr>
 		<td><img src="img/fourier/range.png" class="statsIconSmall" alt="Range"/> &nbsp;Range:</td>
 		<td>
-		{{#with stats.range}}
-			{{#if optimal}}
-				{{formatNumber optimal}}+{{formatNumber falloff}} km
-			{{else}}
-				{{#if missileRange}}
-					&lt;{{formatNumber missileRange}} km
-				{{else}}
-					{{formatNumber droneControlRange}} km
-				{{/if}}
+		{{#with stats.damage}}
+			{{#if turret}}
+				{{formatNumber turret.optimal}}+{{formatNumber turret.falloff}} km
+			{{/if}}
+			{{#if sentries}}
+				{{formatNumber sentries.optimal}}+{{formatNumber sentries.falloff}} km
+			{{/if}}
+			{{#if missile}}
+				&lt;{{formatNumber missile.range}} km
 			{{/if}}
 		{{/with}}
 		</td>
 	</tr>
+	{{#with stats.damage}}
+		{{#if drones}}
+		<tr>
+			<td></td>
+			<td>{{formatNumber drones.range}}k drone control range</td>
+		</tr>
+		{{/if}}
+	{{/with}}
 </table>		
 </template>
 
