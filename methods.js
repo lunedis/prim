@@ -6,7 +6,9 @@ Meteor.methods({
 
 	    var parse = Desc.ParseEFT(eft);
 	    var fit = Desc.FromParse(parse);
-	    var stats = fit.getStats();
-	    return stats;
+	    var tank = fit.getTank();
+	    var navigation = fit.getNavigation();
+	    return _.extend(tank, navigation);
+	    return tank;
 	}
 });
