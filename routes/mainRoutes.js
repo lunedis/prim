@@ -6,3 +6,10 @@ Router.route('/', {
 	},
 	fastRender: true
 });
+
+Router.route('/test', {
+	name: 'test',
+	action: function() {
+		this.render('testDesc');
+	}
+});

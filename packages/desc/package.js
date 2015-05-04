@@ -13,11 +13,14 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('1.0.5');
 
+  api.use('livedata', 'server');
+
   api.export('Desc', 'server');
   
   api.addFiles('invtypes.js', 'server');
   api.addFiles('libdogmaffi.js', 'server');
   api.addFiles('desc.js', 'server');
+  api.addFiles('methods.js', 'server');
 });
 
 Package.onTest(function(api) {
