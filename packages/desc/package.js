@@ -1,6 +1,6 @@
 Package.describe({
   name: 'leokokim:desc',
-  version: '0.0.1',
+  version: '0.1.0',
   // Brief, one-line summary of the package.
   summary: 'Helper and wrapper for libdogma',
   // URL to the Git repository containing the source code for this package.
@@ -11,8 +11,6 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.0.5');
-
   api.use('livedata', 'server');
 
   api.export('Desc', 'server');

@@ -117,128 +117,10 @@ Desc.Fit.prototype.getShipAttributes = function(attrIDs) {
 }
 
 Desc.Fit.prototype.getStats = function() {
-
-	// TODO: Smartbombs + RR
-
 	stats = {};
-
-	var attr = this.getShipAttributes([109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265, 37, 552]);
-	
-	// calculate average reciprocal (e.g. 80% equals x5)
-	var resihull = 1 / ((attr[109] + attr[110] + attr[111] + attr[113]) / 4);
-	var resiarmor = 1 / ((attr[267] + attr[268] + attr[269] + attr[270]) / 4);
-	var resishield = 1 / ((attr[271] + attr[272] + attr[273] + attr[274]) / 4);
-	// calculate ehp
-	var ehphull = attr[9] * resihull;
-	var ehparmor = attr[265] * resiarmor;
-	var ehpshield = attr[263] * resishield;
-	// sum up ehp
-	stats.ehp = ehphull + ehparmor + ehpshield;
-	
-	stats.speed = attr[37];
-	stats.sigRadius = attr[552];
-
-	stats.dps = 0;
-	stats.range = {};
-	stats.missileDPS = 0;
-	stats.turretDPS = 0;
-	stats.droneDPS = 0;
-	var effects = [this.EFFECT_MISSILES, this.EFFECT_PROJECTILEFIRED, this.EFFECT_TARGETATTACK];
-	
-	// Test which modules have which effects
-	for (var i = 0; i < this.modules.length; i++) {
-		var m = this.modules[i];
-
-		for (var j = 0; j < effects.length; j++) {
-			var e = effects[j];
-			if(typeHasEffect(m.module, m.state, e)) {
-				var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
-					DOGMA.LOC_Module, m.key, e);
-
-				if(effectAttributes.duration < 1e-300)
-					continue;
-
-				if(e === this.EFFECT_MISSILES) {
-					var multiplier = this.dogmaContext.getCharacterAttribute(
-						this.ATTR_MISSILEDAMAGEMULTIPLIER);
-					var emDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_EMDAMAGE);
-					var explosiveDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_EXPLOSIVEDAMAGE);
-					var kineticDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_KINETICDAMAGE);
-					var thermalDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_THERMALDAMAGE);
-
-					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
-					stats.dps += dps;
-					stats.missileDPS += dps;
-
-					var missileVelocity = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_MISSILEVELOCITY);
-					var flightTime = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_FLIGHTTIME);
-					var range = missileVelocity * flightTime / 1000000;
-					stats.range = {missileRange: range};
-				} else if (e === this.EFFECT_TARGETATTACK || e === this.EFFECT_PROJECTILEFIRED) {
-					var multiplier = this.dogmaContext.getModuleAttribute(
-						m.key, this.ATTR_DAMAGEMULTIPLIER);
-					var emDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_EMDAMAGE);
-					var explosiveDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_EXPLOSIVEDAMAGE);
-					var kineticDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_KINETICDAMAGE);
-					var thermalDamage = this.dogmaContext.getChargeAttribute(
-						m.key, this.ATTR_THERMALDAMAGE);
-					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
-					stats.dps += dps;
-					stats.turretDPS += dps;
-
-					stats.range = {optimal: effectAttributes.range / 1000,
-									falloff: effectAttributes.falloff / 1000};
-				}
-			}
-			
-		}
-	}
-
-	for (var i = this.drones.inSpace.length - 1; i >= 0; i--) {
-		var d = this.drones.inSpace[i];
-		var e = this.EFFECT_TARGETATTACK;
-		if(typeHasEffect(d.typeID, DOGMA.STATE_Active, e)) {
-			
-			var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
-				DOGMA.LOC_Drone, d.typeID, e);
-
-			var multiplier = this.dogmaContext.getDroneAttribute(
-				d.typeID, this.ATTR_DAMAGEMULTIPLIER);
-			var emDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, this.ATTR_EMDAMAGE);
-			var explosiveDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, this.ATTR_EXPLOSIVEDAMAGE);
-			var kineticDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, this.ATTR_KINETICDAMAGE);
-			var thermalDamage = this.dogmaContext.getDroneAttribute(
-				d.typeID, this.ATTR_THERMALDAMAGE);
-			var dps = ((multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration) * d.count;
-			stats.dps += dps;
-			stats.droneDPS += dps;
-
-		}
-	};
-
-	// if the ship is mostly a drone ship, use drone control range as range
-	if(stats.droneDPS > stats.turretDPS && stats.droneDPS > stats.missileDPS) {
-		var droneControlRange = this.dogmaContext.getCharacterAttribute(this.ATTR_DRONECONTROLRANGE) / 1000;
-		stats.range = {droneControlRange: droneControlRange};
-	}
-
-	stats.dps *= 1000;
-	stats.droneDPS *= 1000;
-	stats.turretDPS *= 1000;
-	stats.missileDPS *= 1000;
-
+	stats.tank = this.getTank();
+	stats.navigation = this.getNavigation();
+	stats.damage = this.getDamage();
 	return stats;
 }
 
@@ -409,6 +291,16 @@ Desc.Fit.prototype.getDamage = function() {
 			}
 		}
 	}
+
+	_.each(result, function(item) {
+		item.dps *= 1000;
+	});
+
+	var totalDPS = _.reduce(result, function(memo, value) {
+		return memo + value.dps;
+	}, 0);
+
+	result.total = totalDPS;
 
 	return result;
 
