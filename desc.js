@@ -39,10 +39,17 @@ Desc.Fit.prototype.ATTR_MAXACTIVEDRONES = 352;
 Desc.Fit.prototype.ATTR_REQUIREDSKILL1 = 182;
 Desc.Fit.prototype.TYPE_SENTRYDRONEINTERFACING = 23594;
 
+// RR
+Desc.Fit.prototype.ATTR_ARMORRRAMOUNT = 84;
+Desc.Fit.prototype.ATTR_SHIELDBONUS = 68;
+
 // Effects
 Desc.Fit.prototype.EFFECT_TARGETATTACK = 10;
 Desc.Fit.prototype.EFFECT_PROJECTILEFIRED = 34;
 Desc.Fit.prototype.EFFECT_MISSILES = 101;
+Desc.Fit.prototype.EFFECT_SMARTBOMB = 38;  
+Desc.Fit.prototype.EFFECT_ARMORRR = 592;
+Desc.Fit.prototype.EFFECT_SHIELDTRANSFER = 18;
 
 Desc.Fit.prototype.setShip = function(s) {
 	if(this.dogmaContext.setShip(s)) {
@@ -121,6 +128,7 @@ Desc.Fit.prototype.getStats = function() {
 	stats.tank = this.getTank();
 	stats.navigation = this.getNavigation();
 	stats.damage = this.getDamage();
+	stats.outgoing = this.getOutgoing();
 	return stats;
 }
 
@@ -156,7 +164,7 @@ Desc.Fit.prototype.getNavigation = function() {
 Desc.Fit.prototype.getDamage = function() {
 	var result = {};
 
-	var effects = [this.EFFECT_MISSILES, this.EFFECT_PROJECTILEFIRED, this.EFFECT_TARGETATTACK];
+	var effects = [this.EFFECT_MISSILES, this.EFFECT_PROJECTILEFIRED, this.EFFECT_TARGETATTACK, this.EFFECT_SMARTBOMB];
 	
 	// Test which modules have which effects
 	for (var i = 0; i < this.modules.length; i++) {
@@ -170,7 +178,6 @@ Desc.Fit.prototype.getDamage = function() {
 
 				if(effectAttributes.duration < 1e-300)
 					continue;
-
 				if(e === this.EFFECT_MISSILES) {
 					var multiplier = this.dogmaContext.getCharacterAttribute(
 						this.ATTR_MISSILEDAMAGEMULTIPLIER);
@@ -239,6 +246,26 @@ Desc.Fit.prototype.getDamage = function() {
 
 					result.turret.dps += dps;
 
+				} else if (e === this.EFFECT_SMARTBOMB) {
+					var emDamage = this.dogmaContext.getModuleAttribute(
+						m.key, this.ATTR_EMDAMAGE);
+					var explosiveDamage = this.dogmaContext.getModuleAttribute(
+						m.key, this.ATTR_EXPLOSIVEDAMAGE);
+					var kineticDamage = this.dogmaContext.getModuleAttribute(
+						m.key, this.ATTR_KINETICDAMAGE);
+					var thermalDamage = this.dogmaContext.getModuleAttribute(
+						m.key, this.ATTR_THERMALDAMAGE);
+					var dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration;
+					
+					if(typeof result.smartbomb === 'undefined') {
+						result.smartbomb = {};
+						result.smartbomb.dps = 0;
+
+						result.smartbomb.range = effectAttributes.range / 1000;
+					}
+
+					result.smartbomb.dps += dps;
+
 				}
 			}
 			
@@ -304,6 +331,57 @@ Desc.Fit.prototype.getDamage = function() {
 
 	return result;
 
+}
+
+Desc.Fit.prototype.getOutgoing = function() {
+	var result = {};
+
+	var effects = [this.EFFECT_ARMORRR, this.EFFECT_SHIELDTRANSFER ];
+	
+	// Test which modules have which effects
+	for (var i = 0; i < this.modules.length; i++) {
+		var m = this.modules[i];
+
+		for (var j = 0; j < effects.length; j++) {
+			var e = effects[j];
+			if(typeHasEffect(m.module, m.state, e)) {
+				var effectAttributes = this.dogmaContext.getLocationEffectAttributes(
+					DOGMA.LOC_Module, m.key, e);
+
+				if(effectAttributes.duration < 1e-300)
+					continue;
+
+				if (e === this.EFFECT_ARMORRR) {
+					var amount = this.dogmaContext.getModuleAttribute(m.key, this.ATTR_ARMORRRAMOUNT);
+
+					if(typeof result.armor === 'undefined') {
+						result.armor = {};
+						result.armor.range = effectAttributes.range / 1000;
+						result.armor.rr = 0;
+					}
+					result.armor.rr += amount / effectAttributes.duration;
+				} else if (e === this.EFFECT_SHIELDTRANSFER) {
+					var amount = this.dogmaContext.getModuleAttribute(m.key, this.ATTR_SHIELDBONUS);
+
+					if(typeof result.shield === 'undefined') {
+						result.shield = {};
+						result.shield.range = effectAttributes.range / 1000;
+						result.shield.rr = 0;
+					}
+					result.shield.rr += amount / effectAttributes.duration;
+				}
+			}
+			
+		}
+	}
+
+	// TODO: Logi drones
+
+	_.each(result, function(item) {
+		item.rr *= 1000;
+	});
+
+	return result;
 }
 
 Desc.Fleet = function() {
