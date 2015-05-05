@@ -92,12 +92,6 @@ Meteor.startup(function() {
 		}
 	});
 
-	Template['rackSmall'].helpers({
-		filled: function(modules) {
-			return (modules.length > 0);
-		}
-	});
-
 	Template['addFitting'].helpers({
 		AddFittingsSchema: function() {
 			return AddFittingsSchema;
