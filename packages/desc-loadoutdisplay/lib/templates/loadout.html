@@ -1,0 +1,53 @@
+<template name="loadout">
+<div class="loadout">
+	<p class="h3 text-center">Loadout</p>
+	<div class="racks">
+		{{>rack name="HIGH" modules=highs}}
+		{{>rack name="MID" modules=mids}}
+		{{>rack name="LOW" modules=lows}}
+		{{>rack name="RIG" modules=rigs}}
+		{{>rackSmall name="SUBS" modules=subs}}
+		{{>rackSmall name="DRNS" modules=drones}}
+		{{>rackSmall name="CRG" modules=charges}}
+	</div>
+</div>
+</template>
+
+<template name="rack">
+<div class="rack">
+	<span class="rackName">{{name}}</span>
+	{{#each modules}}{{>module}}{{/each}}
+</div>
+</template>
+
+<template name="rackSmall">
+{{#if filled modules}}
+<div class="rack small">
+	<span class="rackName">{{name}}</span>
+	{{#each modules}}{{>module}}{{/each}}
+</div>
+{{/if}}
+</template>
+
+<template name="module">
+<div class="module"><img class="module" src="http://image.eveonline.com/Type/{{typeID}}_64.png" title="{{typeName}}" alt="{{typeName}}"/>{{#if chargeID}}<img class="charge" src="http://image.eveonline.com/Type/{{chargeID}}_32.png" title="{{chargeName}}" alt="{{chargeName}}"/>{{/if}}{{#if quantity}}<span class="quantity">{{quantity}}</span>{{/if}}</div>
+</template>
+
+<template name="eft">
+<p>Click to select</p>
+<pre class="eft">[{{shipTypeName}}, MiG]{{#with loadout}}{{#each lows}}
+{{>eftModule}}{{/each}}
+{{#each mids}}
+{{>eftModule}}{{/each}}
+{{#each highs}}
+{{>eftModule}}{{/each}}
+{{#each rigs}}
+{{>eftModule}}{{/each}}
+{{#each drones}}
+{{typeName}} x{{quantity}}{{/each}}
+{{#each charges}}
+{{typeName}} x{{quantity}}{{/each}}{{/with}}
+</pre>
+</template>
+
+<template name="eftModule">{{typeName}}{{#if chargeName}}, {{chargeName}}{{/if}}</template>
