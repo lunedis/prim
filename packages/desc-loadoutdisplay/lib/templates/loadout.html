@@ -32,3 +32,22 @@
 <template name="module">
 <div class="module"><img class="module" src="http://image.eveonline.com/Type/{{typeID}}_64.png" title="{{typeName}}" alt="{{typeName}}"/>{{#if chargeID}}<img class="charge" src="http://image.eveonline.com/Type/{{chargeID}}_32.png" title="{{chargeName}}" alt="{{chargeName}}"/>{{/if}}{{#if quantity}}<span class="quantity">{{quantity}}</span>{{/if}}</div>
 </template>
+
+<template name="eft">
+<p>Click to select</p>
+<pre class="eft">[{{shipTypeName}}, MiG]{{#with loadout}}{{#each lows}}
+{{>eftModule}}{{/each}}
+{{#each mids}}
+{{>eftModule}}{{/each}}
+{{#each highs}}
+{{>eftModule}}{{/each}}
+{{#each rigs}}
+{{>eftModule}}{{/each}}
+{{#each drones}}
+{{typeName}} x{{quantity}}{{/each}}
+{{#each charges}}
+{{typeName}} x{{quantity}}{{/each}}{{/with}}
+</pre>
+</template>
+
+<template name="eftModule">{{typeName}}{{#if chargeName}}, {{chargeName}}{{/if}}</template>

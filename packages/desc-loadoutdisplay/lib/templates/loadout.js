@@ -4,4 +4,10 @@ Meteor.startup(function() {
 			return (modules.length > 0);
 		}
 	});
+
+	Template['eft'].events({
+		'click .eft': function(event) {
+			SelectText(event.target);
+		}
+	});
 });

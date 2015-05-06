@@ -98,11 +98,5 @@ Meteor.startup(function() {
 		}
 	});
 
-	Template['eft'].events({
-		'click .eft': function(event) {
-			SelectText(event.target);
-		}
-	})
-
 		
 });
