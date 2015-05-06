@@ -1,0 +1,87 @@
+{
+  "dependencies": {
+    "ffi": {
+      "version": "1.3.0",
+      "dependencies": {
+        "bindings": {
+          "version": "1.2.1"
+        },
+        "debug": {
+          "version": "2.1.3",
+          "dependencies": {
+            "ms": {
+              "version": "0.7.0"
+            }
+          }
+        },
+        "nan": {
+          "version": "1.7.0"
+        }
+      }
+    },
+    "ref": {
+      "version": "1.0.1",
+      "dependencies": {
+        "bindings": {
+          "version": "1.2.1"
+        },
+        "debug": {
+          "version": "2.1.3",
+          "dependencies": {
+            "ms": {
+              "version": "0.7.0"
+            }
+          }
+        },
+        "nan": {
+          "version": "1.7.0"
+        }
+      }
+    },
+    "ref-struct": {
+      "version": "1.0.1",
+      "dependencies": {
+        "debug": {
+          "version": "2.1.3",
+          "dependencies": {
+            "ms": {
+              "version": "0.7.0"
+            }
+          }
+        }
+      }
+    },
+    "ref-union": {
+      "version": "0.0.3",
+      "dependencies": {
+        "debug": {
+          "version": "1.0.4",
+          "dependencies": {
+            "ms": {
+              "version": "0.6.2"
+            }
+          }
+        },
+        "ref": {
+          "version": "0.3.5",
+          "dependencies": {
+            "bindings": {
+              "version": "1.2.1"
+            },
+            "debug": {
+              "version": "2.1.3",
+              "dependencies": {
+                "ms": {
+                  "version": "0.7.0"
+                }
+              }
+            },
+            "nan": {
+              "version": "1.5.3"
+            }
+          }
+        }
+      }
+    }
+  }
+}
