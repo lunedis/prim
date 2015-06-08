@@ -302,7 +302,7 @@ DogmaContext.prototype.getDroneAttribute = function(drone, attribute) {
 
 FleetContext = function() {
 	var fleetContextPtrPtr = ref.alloc(dogma_fleet_context_tPtrPtr);
-	assert(libdogma.dogma_init_context(fleetContextPtrPtr) === DOGMA.OK);
+	assert(libdogma.dogma_init_fleet_context(fleetContextPtrPtr) === DOGMA.OK);
 	this.internalContext = fleetContextPtrPtr.deref();
 }
 

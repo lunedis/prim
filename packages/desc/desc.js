@@ -124,7 +124,7 @@ Desc.Fit.prototype.getShipAttributes = function(attrIDs) {
 }
 
 Desc.Fit.prototype.getStats = function() {
-	stats = {};
+	var stats = {};
 	stats.tank = this.getTank();
 	stats.navigation = this.getNavigation();
 	stats.damage = this.getDamage();
@@ -179,6 +179,7 @@ Desc.Fit.prototype.getDamage = function() {
 				if(effectAttributes.duration < 1e-300)
 					continue;
 				if(e === this.EFFECT_MISSILES) {
+					console.log('MISSILE');
 					var multiplier = this.dogmaContext.getCharacterAttribute(
 						this.ATTR_MISSILEDAMAGEMULTIPLIER);
 					var emDamage = this.dogmaContext.getChargeAttribute(
@@ -219,6 +220,8 @@ Desc.Fit.prototype.getDamage = function() {
 					result.missile.dps += dps;
 
 				} else if (e === this.EFFECT_TARGETATTACK || e === this.EFFECT_PROJECTILEFIRED) {
+					console.log('TURRET');
+
 					var multiplier = this.dogmaContext.getModuleAttribute(
 						m.key, this.ATTR_DAMAGEMULTIPLIER);
 					var emDamage = this.dogmaContext.getChargeAttribute(
@@ -432,7 +435,7 @@ Desc.ParseEFT = function(fitting) {
 
 		var headerRegex = /\[([A-Za-z ]+), (.*)\]/;
 		var droneRegex = /(.*) x([0-9]+)$/;
-		var moduleRegex = /([A-Za-z0-9 '\-\(\)]+)(, )?(.*)?/
+		var moduleRegex = /([A-Za-z0-9 '\-\(\)]+)(, )?(.*)?/;
 
 		var m;
 
@@ -510,7 +513,7 @@ Desc.FromParse = function(parse) {
 
 Desc.FromEFT = function(fitting) {
 	var parse = Desc.ParseEFT(fitting);
-	var f = new Desc.FromParse(parse);
+	var f = Desc.FromParse(parse);
 	return f;
 }
 
