@@ -17,14 +17,10 @@ Package.onUse(function(api) {
   api.export('Desc', 'server');
   api.export('DescFitting', 'server');
   api.export('DescFleet', 'server');
-  
-  //api.addFiles('invtypes.js', 'server');
+
   api.addFiles('invtypes.coffee', 'server');
-  //api.addFiles('libdogmaffi.js', 'server');
   api.addFiles('libdogmaffi.coffee', 'server');
-  //api.addFiles('desc.js', 'server');
   api.addFiles('desc.coffee', 'server');
-  //api.addFiles('methods.js', 'server');
   api.addFiles('methods.coffee', 'server');
 });
 
@@ -32,7 +28,7 @@ Package.onTest(function(api) {
   api.use('coffeescript');
   api.use('tinytest');
   api.use('leokokim:desc');
-  api.addFiles('desc-tests.coffee', 'server');
+  api.addFiles('libdogmaffi-tests.coffee', 'server');
 });
 
 Npm.depends({
