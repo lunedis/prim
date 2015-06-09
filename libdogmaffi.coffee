@@ -137,11 +137,10 @@ boolPtr = ref.refType ref.types.bool
 }
 
 @init = ->
-  return libdogma.dogma_init()
+  libdogma.dogma_init() == DOGMA.OK
 
 assert = (x) ->
   !x ? throw 'assert'
-
 
 # Generalize AddSomethingToShip functions.
 # They all require various parameters, with one being the key variable that is getting filled and returned.
@@ -185,6 +184,12 @@ class @DogmaContext
   setDefaultSkillLevel: (level) ->
     libdogma.dogma_set_default_skill_level(@internalContext, level) == DOGMA.OK
 
+  setSkillLevel: (typeID, level) ->
+    libdogma.dogma_set_skill_level(@internalContext, typeID, level) == DOGMA.OK
+
+  resetSkillLevels: ->
+    libdogma.dogma_reset_skill_levels(@internalContext) == DOGMA.OK
+
   setShip: (ship) ->
     libdogma.dogma_set_ship(@internalContext, ship) == DOGMA.OK
 
@@ -192,17 +197,38 @@ class @DogmaContext
   addImplant: (implant) ->
     genericAdd libdogma.dogma_add_implant, @internalContext, implant, 'Key'
 
-  addModule: (module, state) ->
+  addModule: (module) ->
+    genericAdd libdogma.dogma_add_module, @internalContext, module, 'Key'
+
+  addModuleS: (module, state) ->
     genericAdd libdogma.dogma_add_module_s, @internalContext, module, 'Key', state
 
-  addModuleWithCharge: (module, state, charge) ->
+  addModuleC: (module, charge) ->
+    genericAdd libdogma.dogma_add_module_c, @internalContext, module, 'Key', charge
+
+  addModuleSC: (module, state, charge) ->
     genericAdd libdogma.dogma_add_module_sc, @internalContext, module, 'Key', state, charge
+
+  addCharge: (key, charge) ->
+    libdogma.dogma_add_charge(@internalContext, key, charge) == DOGMA.OK
 
   addDrone: (drone, count) ->
     libdogma.dogma_add_drone(@internalContext, drone, count) == DOGMA.OK
 
+  removeImplant: (key) ->
+    libdogma.dogma_remove_implant(@internalContext, key) == DOGMA.OK
+
   removeDrone: (drone, count) ->
     libdogma.dogma_remove_drone_partial(@internalContext, drone, count) == DOGMA.OK
+
+  removeModule: (key) ->
+    libdogma.dogma_remove_module(@internalContext, key) == DOGMA.OK
+
+  removeCharge: (key) ->
+    libdogma.dogma_remove_charge(@internalContext, key) == DOGMA.OK
+
+  setModuleState: (key, state) ->
+    libdogma.dogma_set_module_state(@internalContext, key, state) == DOGMA.OK
 
   getLocationEffectAttributes: (location, key, effect) ->
     duration = ref.alloc ref.types.double
@@ -226,8 +252,17 @@ class @DogmaContext
       console.log 'Error'
     attributes
 
+  getLocationAttribute: (locationType, locationIndex, attribute) ->
+    loc = new dogma_location_t
+    loc.type = locationType
+    loc.index = locationIndex
+    getGenericAttribute libdogma.dogma_get_location_attribute, @internalContext, loc, attribute
+
   getShipAttribute: (attribute) ->
     getGenericAttribute libdogma.dogma_get_ship_attribute, @internalContext, attribute
+
+  getSkillAttribute: (typeID, attribute) ->
+    getGenericAttribute libdogma.dogma_get_skill_attribute, @internalContext, typeID, attribute
 
   getCharacterAttribute: (attribute) ->
     getGenericAttribute libdogma.dogma_get_character_attribute, @internalContext, attribute
@@ -241,6 +276,9 @@ class @DogmaContext
   getDroneAttribute: (drone, attribute) ->
     getGenericAttribute libdogma.dogma_get_drone_attribute, @internalContext, drone, attribute
 
+  getImplantAttribute: (key, attribute) ->
+    getGenericAttribute libdogma.dogma_get_implant_attribute, @internalContext, key, attribute
+
 class @FleetContext
   constructor: ->
     fleetContextPtrPtr = ref.alloc dogma_fleet_context_tPtrPtr
@@ -248,17 +286,17 @@ class @FleetContext
     @internalContext = fleetContextPtrPtr.deref()
 
   addSquadMember: (squad, wing, fit) ->
-    (libdogma.dogma_add_squad_member(
-      @internalContext, squad, wing, fit.internalContext) == DOGMA.OK)
+    libdogma.dogma_add_squad_member(
+      @internalContext, squad, wing, fit.internalContext) == DOGMA.OK
 
   addSquadCommander: (squad, wing, fit) ->
-    (libdogma.dogma_add_squad_commander(
-      @internalContext, squad, wing, fit.internalContext) == DOGMA.OK)
+    libdogma.dogma_add_squad_commander(
+      @internalContext, squad, wing, fit.internalContext) == DOGMA.OK
 
   addWingCommander: (wing, fit) ->
-    (libdogma.dogma_add_wing_commander(
-      @internalContext, wing, fit.internalContext) == DOGMA.OK)
+    libdogma.dogma_add_wing_commander(
+      @internalContext, wing, fit.internalContext) == DOGMA.OK
 
   addFleetCommander: (fit) ->
-    (libdogma.dogma_add_fleet_commander(
-      @internalContext, fit.internalContext) == DOGMA.OK)
+    libdogma.dogma_add_fleet_commander(
+      @internalContext, fit.internalContext) == DOGMA.OK
