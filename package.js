@@ -29,9 +29,10 @@ Package.onUse(function(api) {
 });
 
 Package.onTest(function(api) {
+  api.use('coffeescript');
   api.use('tinytest');
   api.use('leokokim:desc');
-  api.addFiles('desc-tests.js');
+  api.addFiles('desc-tests.coffee', 'server');
 });
 
 Npm.depends({

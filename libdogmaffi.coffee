@@ -1,5 +1,5 @@
 ffi = Npm.require 'ffi'
-ref = Npm.require 'ref'
+@ref = Npm.require 'ref'
 Union = Npm.require 'ref-union'
 StructType = Npm.require 'ref-struct'
 
@@ -31,7 +31,7 @@ dogma_location_type_s = ref.types.int
 
 dogma_state_t = ref.types.int
 
-dogma_location_t = StructType(
+@dogma_location_t = StructType(
   type: dogma_location_type_e
   index: dogma_key_t)
 
@@ -67,7 +67,7 @@ dogma_simple_capacitor_tPtrPtr = ref.refType dogma_simple_capacitor_tPtr
 doublePtr = ref.refType ref.types.double
 boolPtr = ref.refType ref.types.bool
 
-libdogma = ffi.Library 'libdogma', {
+@libdogma = ffi.Library 'libdogma', {
   'dogma_init': ['int', [] ],
   'dogma_init_context': ['int', [dogma_context_tPtrPtr]],
   'dogma_free_context': ['int', [dogma_context_tPtr]],
@@ -137,7 +137,7 @@ libdogma = ffi.Library 'libdogma', {
 }
 
 @init = ->
-  libdogma.dogma_init()
+  return libdogma.dogma_init()
 
 assert = (x) ->
   !x ? throw 'assert'
