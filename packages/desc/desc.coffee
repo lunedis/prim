@@ -168,7 +168,6 @@ class DescFitting
                 m.key, @ATTR_THERMALDAMAGE)
               
               dps = (multiplier * (emDamage + explosiveDamage + kineticDamage + thermalDamage)) / effectAttributes.duration
-              console.log dps
               if !result.missile?
                 result.missile = {dps: 0}
 
@@ -192,7 +191,6 @@ class DescFitting
                 result.missile.drf = drf
 
               result.missile.dps += dps
-              console.log result.missile.dps 
             when @EFFECT_TARGETATTACK, @EFFECT_PROJECTILEFIRED
               multiplier = @dogmaContext.getModuleAttribute(
                 m.key, @ATTR_DAMAGEMULTIPLIER)
