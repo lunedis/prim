@@ -6,5 +6,5 @@ Meteor.methods
     parse = Desc.ParseEFT eft
     console.log parse
     fit = Desc.FromParse parse
-    console.log fi
+    console.log fit
     stats = fit.getStats()

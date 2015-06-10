@@ -22,7 +22,7 @@ EFFECT_BoosterShieldCapacityPenalty = 2737;
 EFFECT_HiPower = 12;
 
 Tinytest.add 'libdogma init', (test) ->
-  test.equal Desc.init(), true
+  test.equal init(), true
 
 Tinytest.add 'libdogma character attribute', (test) ->
   c = new DogmaContext()
