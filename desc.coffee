@@ -326,13 +326,13 @@ class DescFleet
       throw new Meteor.Error 500, 'Error adding fit to fleet'
 
   setSquadCommander: (fit) ->
-    if @fleetContext.addSquadCommander 0, 0, f.dogmaContext
+    if @fleetContext.addSquadCommander 0, 0, fit.dogmaContext
       @squadCommander = f
     else
       throw new Meteor.Error 500, 'Error setting squad commander'
 
   setSquadCommander: (fit) ->
-    if @fleetContext.addWingCommander 0, f.dogmaContext
+    if @fleetContext.addWingCommander 0, fit.dogmaContext
       @wingCommander = f
     else
       throw new Meteor.Error 500, 'Error setting wing commander'
