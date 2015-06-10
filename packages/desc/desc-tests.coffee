@@ -1,4 +1,7 @@
-TYPE_Scimitar = 11978;
+TYPE_Scimitar = 11978
+TYPE_PROTOTYPECLOAK = 11370
+TYPE_10MNAFTERBURNERII = 12058
+TYPE_50MNMWDII = 12076
 
 roughly = (test, actual, expected, epsilon) ->
   test.equal((actual - expected) < epsilon, true)
@@ -25,9 +28,8 @@ Tinytest.add 'desc tank basic', (test) ->
   roughly test, stats.ehpshield, 4622, 1
   roughly test, stats.ehp, 10465, 1
 
-Tinytest.add 'desc parse', (test) ->
+Tinytest.add 'desc parse and missiles', (test) ->
   kestrel = """[Kestrel, MiG]
-
   Ballistic Control System II
   Nanofiber Internal Structure II
 
@@ -62,6 +64,12 @@ Tinytest.add 'desc parse', (test) ->
   test.equal parse.loadout.highs.length, 4
   test.equal parse.loadout.drones.length, 0
   test.equal parse.loadout.charges.length, 9
+
+  fit = Desc.FromParse parse
+  stats = fit.getDamage()
+
+  roughly test, stats.missile.range, 63, 1
+  roughly test, stats.missile.dps, 91.1, 1e-1
 
 Tinytest.add 'desc drones', (test) ->
   VNI = """[Vexor Navy Issue, MiG]
@@ -107,3 +115,51 @@ Tinytest.add 'desc drones', (test) ->
   test.equal stats.drones.range, 60
   roughly test, stats.drones.speed, 2846, 1
 
+Tinytest.add 'desc cloak', (test) ->
+  fit = new DescFitting()
+
+  fit.setShip TYPE_Scimitar 
+  fit.addModule TYPE_PROTOTYPECLOAK
+
+  nav = fit.getNavigation()
+
+  roughly test, nav.speed, 316, 1
+
+Tinytest.add 'desc dualprop', (test) ->
+  fit = new DescFitting()
+
+  fit.setShip TYPE_Scimitar
+  fit.addModule TYPE_10MNAFTERBURNERII
+  fit.addModule TYPE_50MNMWDII
+
+  nav = fit.getNavigation()
+
+  roughly test, nav.speed, 2085.8, 1e-1
+  roughly test, nav.speed2, 784.7, 1e-1
+
+Tinytest.add 'desc T3D', (test) ->
+  confessor = """[Confessor, shield beam]
+  Heat Sink II
+  Heat Sink II
+  Heat Sink II
+  Micro Auxiliary Power Core II
+  Co-Processor II
+
+  5MN Y-T8 Compact Microwarpdrive
+  Medium F-S9 Regolith Compact Shield Extender
+  Tracking Computer II, Optimal Range Script
+
+  Small Focused Beam Laser II, Aurora S
+  Small Focused Beam Laser II, Aurora S
+  Small Focused Beam Laser II, Aurora S
+  Small Focused Beam Laser II, Aurora S
+  [Empty High slot]
+  [Empty High slot]
+
+  Small Energy Locus Coordinator II
+  Small Energy Locus Coordinator II
+  Small Anti-EM Screen Reinforcer II
+  """
+
+  fit = Desc.FromEFT confessor
+  
