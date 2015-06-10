@@ -323,19 +323,19 @@ class DescFleet
 
   addFit: (fit) ->
     if @fleetContext.addSquadMember 0, 0, fit.dogmaContext
-      @fits.push(f)
+      @fits.push(fit)
     else
       throw new Meteor.Error 500, 'Error adding fit to fleet'
 
   setSquadCommander: (fit) ->
     if @fleetContext.addSquadCommander 0, 0, fit.dogmaContext
-      @squadCommander = f
+      @squadCommander = fit
     else
       throw new Meteor.Error 500, 'Error setting squad commander'
 
-  setSquadCommander: (fit) ->
+  setWingCommander: (fit) ->
     if @fleetContext.addWingCommander 0, fit.dogmaContext
-      @wingCommander = f
+      @wingCommander = fit
     else
       throw new Meteor.Error 500, 'Error setting wing commander'
 
@@ -395,7 +395,7 @@ Desc.ParseEFT = (fitting) ->
 
   [parse.loadout.lows, parse.loadout.mids, parse.loadout.highs, parse.loadout.rigs, parse.loadout.subs] = racks
 
-  parse
+  return parse
 
 Desc.FromParse = (parse) ->
   f = new DescFitting
@@ -416,7 +416,7 @@ Desc.FromParse = (parse) ->
   for d in parse.loadout.drones
     f.addDrone d.typeID, d.quantity
 
-  f
+  return f
 
 Desc.FromEFT = (fitting) ->
   parse = Desc.ParseEFT fitting
@@ -435,7 +435,7 @@ Desc.getSkirmishLoki = ->
   f.addModule 4290
   f.addModule 11014
   f.addModule 11014
-  f
+  return f
 
 Desc.getStandardLinks1 = ->
   f = new DescFitting
@@ -452,7 +452,7 @@ Desc.getStandardLinks1 = ->
   f.addModule 11014
   f.addModule 11014
   f.addModule 11014
-  f
+  return f
 
 Desc.getStandardLinks2 = ->
   f = new DescFitting
@@ -467,4 +467,4 @@ Desc.getStandardLinks2 = ->
   f.addModule 11014
   f.addModule 11014
   f.addModule 11014
-  f
+  return f
