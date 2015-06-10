@@ -162,4 +162,42 @@ Tinytest.add 'desc T3D', (test) ->
   """
 
   fit = Desc.FromEFT confessor
+  test.equal true, false #TODO: implement test
+
+Tinytest.add 'desc fleet', (test) ->
+  arbitrator = """[Arbitrator, Med Mobile Armor]
+  1600mm Rolled Tungsten Compact Plates
+  Energized Adaptive Nano Membrane II
+  Damage Control II
+  Drone Damage Amplifier II
+  Drone Damage Amplifier II
+
+  50MN Cold-Gas Enduring Microwarpdrive
+  Drone Navigation Computer II
+  Drone Navigation Computer II
+  Balmer Series Tracking Disruptor I
+
+  Drone Link Augmentor II
+  Light Missile Launcher II, Caldari Navy Inferno Light Missile
+  Light Missile Launcher II, Caldari Navy Inferno Light Missile
+  [Empty High slot]
+
+  Medium Anti-Explosive Pump I
+  Medium Trimark Armor Pump I
+  Medium Trimark Armor Pump I
+
+
+  Infiltrator II x5
+  """
+
+  fit = Desc.FromEFT arbitrator
+  fleet = new DescFleet()
+  fleet.setWingCommander Desc.getStandardLinks1()
+  fleet.setSquadCommander Desc.getStandardLinks2()
+  fleet.addFit fit
+
+  stats = fit.getStats()
   
+  roughly test, stats.tank.ehp, 41227, 1
+  roughly test, stats.navigation.speed, 1651.3, 1e-1
+  roughly test, stats.navigation.sig, 523, 1
