@@ -29,6 +29,7 @@ Package.onTest(function(api) {
   api.use('tinytest');
   api.use('leokokim:desc');
   api.addFiles('libdogmaffi-tests.coffee', 'server');
+  api.addFiles('desc-tests.coffee', 'server');
 });
 
 Npm.depends({

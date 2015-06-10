@@ -62,7 +62,7 @@ class DescFitting
       console.log "Error adding implant #{implant}"
 
   addModule: (module) ->
-    if (key = @dogmaContext.addModule module, DOGMA.STATE_Active) != false
+    if (key = @dogmaContext.addModuleS module, DOGMA.STATE_Active) != false
       m = {key: key, module: module, state: DOGMA.STATE_Active}
       @modules.push(m)
       key
@@ -70,7 +70,7 @@ class DescFitting
       console.log "Error adding module #{module}"
 
   addModuleWithCharge: (module, charge) ->
-    if (key = @dogmaContext.addModuleWithCharge module, DOGMA.STATE_Active, charge) != false
+    if (key = @dogmaContext.addModuleSC module, DOGMA.STATE_Active, charge) != false
       m = {key: key, module: module, charge: charge, state: DOGMA.STATE_Active}
       @modules.push(m)
       key
