@@ -279,6 +279,9 @@ class @DogmaContext
   getImplantAttribute: (key, attribute) ->
     getGenericAttribute libdogma.dogma_get_implant_attribute, @internalContext, key, attribute
 
+  free: ->
+    libdogma.dogma_free_context(@internalContext) == DOGMA.OK
+
 class @FleetContext
   constructor: ->
     fleetContextPtrPtr = ref.alloc dogma_fleet_context_tPtrPtr
@@ -300,3 +303,22 @@ class @FleetContext
   addFleetCommander: (fit) ->
     libdogma.dogma_add_fleet_commander(
       @internalContext, fit.internalContext) == DOGMA.OK
+
+  removeFleetMember: (fit) ->
+    boolVal = ref.alloc ref.types.bool
+    if libdogma.dogma_remove_fleet_member(@internalContext, fit.internalContext, boolVal) == DOGMA.OK
+      boolVal.deref()
+    else
+      false
+
+  setFleetBooster: (fit) ->
+    libdogma.dogma_set_fleet_booster(@internalContext, fit?.internalContext) == DOGMA.OK
+
+  setWingBooster: (wing, fit) ->
+    libdogma.dogma_set_fleet_booster(@internalContext, wing, fit?.internalContext) == DOGMA.OK
+
+  setSquadBooster: (wing, squad, fit) ->
+    libdogma.dogma_set_fleet_booster(@internalContext, wing, squad, fit?.internalContext) == DOGMA.OK
+
+  free: ->
+    libdogma.dogma_free_fleet_context(@internalContext) == DOGMA.OK

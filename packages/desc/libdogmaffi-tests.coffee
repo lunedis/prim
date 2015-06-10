@@ -113,26 +113,19 @@ Tinytest.add 'libdogma targets', (test) ->
   test.equal c.clear_target(DOGMA.LOC_Module, key), true
   test.equal c.removeModule(key), true
 
-Tinytest.add 'libdogma fleet', (test) ->
+Tinytest.add 'libdogma fleet and freeing', (test) ->
   c = new DogmaContext()
   test.equal c.setShip(TYPE_Rifter), true
 
   f = new FleetContext()
-  test.equal f.addFleetCommander(c.internalContext), true
-  test.equal f.addWingCommander(0, c.internalContext), true
-  test.equal f.addSquadCommander( 0, 0, c.internalContext), true
-  test.equal f.addSquadMember(0, 0, c.internalContext), true
+  test.equal f.addFleetCommander(c), true
+  test.equal f.addWingCommander(0, c), true
+  test.equal f.addSquadCommander( 0, 0, c), true
+  test.equal f.addSquadMember(0, 0, c), true
 
-  test.equal f.removeFleetMember(c.internalContext), true
-  test.equal f.removeFleetMember(c.internalContext), false
-  test.equal f.addSquadMember(c.internalContext), true
-
-  test.equal f.setFleetBooster(c.internalContext), true
-  test.equal f.setFleetBooster(null), true
-  test.equal f.setWingBooster(c.internalContext), true
-  test.equal f.setWingBooster(null), true
-  test.equal f.setSquadBooster(c.internalContext), true
-  test.equal f.setSquadBooster(null), true
+  test.equal f.removeFleetMember(c), true
+  test.equal f.removeFleetMember(c), false
+  test.equal f.addSquadMember(0, 0, c), true
 
   test.equal c.free(), true
   test.equal f.free(), true
