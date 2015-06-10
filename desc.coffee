@@ -21,6 +21,7 @@ class DescFitting
   ATTR_KINETICDAMAGE: 117
   ATTR_THERMALDAMAGE: 118
   ATTR_LOCKRANGE: 76
+  ATTR_MAXVELOCITY: 37
   # Missiles
   ATTR_MISSILEDAMAGEMULTIPLIER: 212
   ATTR_FLIGHTTIME: 281
@@ -137,7 +138,7 @@ class DescFitting
     tank
 
   getNavigation: ->
-    attr = @getShipAttributes [37, 552]
+    attr = @getShipAttributes [@ATTR_MAXVELOCITY, 552]
 
     navigation = {speed: attr[37], sig: attr[552]}
 
@@ -257,6 +258,7 @@ class DescFitting
             result.drones = {}
             result.drones.dps = 0
             result.drones.range = @dogmaContext.getCharacterAttribute(@ATTR_DRONECONTROLRANGE) / 1000
+            result.drones.speed = @dogmaContext.getDroneAttribute(d.typeID, @ATTR_MAXVELOCITY)
           result.drones.dps += dps
 
     _.each result, (item) ->
