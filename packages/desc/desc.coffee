@@ -14,7 +14,6 @@ class DescFitting
       inSpace: []
       inBay: []
     @implants = []
-    @mode = null
     @propmods = [{typeName: 'None', typeID: 'None', key: -1}]
 
   # General
@@ -57,6 +56,21 @@ class DescFitting
   EFFECT_SPEEDBOOST: 710 # for propmods
   EFFECT_SPEEDBOOSTSIGMASS: 1254 # for mwd
   EFFECT_MJD: 4921 # for mjd
+
+  # TODO: better way?
+  MODES:
+    34317: # Confessor
+      defense: 34319
+      propulsion: 34323
+      sharpshooter: 34321
+    34562: # Svipul
+      defense: 34564
+      propulsion: 34566
+      sharpshooter: 34570
+    34828: # Jackdaw
+      defense: 35676
+      propulsion: 35677
+      sharpshooter: 35678 
 
   setShip: (s) ->
     @ship = s if @dogmaContext.setShip(s)
@@ -127,13 +141,27 @@ class DescFitting
       attr[id] = @dogmaContext.getShipAttribute id
     return attr
 
-  getStats: ->
+  _getRawStats: ->
     stats = {}
     stats.tank = @getTank()
     stats.navigation = @getNavigation()
     stats.damage = @getDamage()
     stats.outgoing = @getOutgoing()
     return stats
+
+  getStats: ->
+    if @MODES[@ship]?
+      modeStats = []
+      for mode, id of @MODES[@ship]
+        key = @dogmaContext.addModule id
+        stats = @_getRawStats()
+        @dogmaContext.removeModule key
+        modeStats[mode] = stats
+
+      return modeStats
+    else
+      @_getRawStats()
+
 
   getTank: ->
     attr = @getShipAttributes [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265]
@@ -162,13 +190,13 @@ class DescFitting
       stats.typeName = prop.typeName
 
       @dogmaContext.setModuleState(prop.key, DOGMA.STATE_Active) if prop.key != -1
-      attr = @getShipAttributes [@ATTR_MAXVELOCITY, 552]
+      attr = @getShipAttributes attrIDs
       stats.speed = attr[@ATTR_MAXVELOCITY]
       stats.sig = attr[@ATTR_SIGNATURERADIUS]
 
       @dogmaContext.setModuleState(prop.key, DOGMA.STATE_Online) if prop.key != -1
       navigation.push stats
-      
+
     return navigation
 
   getDamage: ->
