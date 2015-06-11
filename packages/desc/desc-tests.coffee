@@ -13,8 +13,10 @@ Tinytest.add 'desc navigation basic', (test) ->
   fit = new DescFitting()
   fit.setShip TYPE_Scimitar
   stats = fit.getNavigation()
-  test.equal stats.speed, 316.25
-  test.equal stats.sig, 65
+  navigation = stats[0] # no propmod
+  test.equal navigation.typeName, 'None'
+  test.equal navigation.speed, 316.25
+  test.equal navigation.sig, 65
 
 Tinytest.add 'desc tank basic', (test) ->
   fit = new DescFitting()
@@ -123,7 +125,7 @@ Tinytest.add 'desc cloak', (test) ->
 
   nav = fit.getNavigation()
 
-  roughly test, nav.speed, 316, 1
+  roughly test, nav[0].speed, 316, 1
 
 Tinytest.add 'desc dualprop', (test) ->
   fit = new DescFitting()
@@ -132,10 +134,15 @@ Tinytest.add 'desc dualprop', (test) ->
   fit.addModule TYPE_10MNAFTERBURNERII
   fit.addModule TYPE_50MNMWDII
 
-  nav = fit.getNavigation()
+  navs = fit.getNavigation()
 
-  roughly test, nav.speed, 2085.8, 1e-1
-  roughly test, nav.speed2, 784.7, 1e-1
+  ab = navs[1]
+  test.equal ab.typeID, TYPE_10MNAFTERBURNERII
+  roughly test, ab.speed, 784.7, 1e-1
+
+  mwd = navs[2]
+  test.equal mwd.typeID, TYPE_50MNMWDII
+  roughly test, mwd.speed, 2085.8, 1e-1
 
 Tinytest.add 'desc T3D', (test) ->
   confessor = """[Confessor, shield beam]
@@ -197,7 +204,7 @@ Tinytest.add 'desc fleet', (test) ->
   fleet.addFit fit
 
   stats = fit.getStats()
-  
+
   roughly test, stats.tank.ehp, 41227, 1
-  roughly test, stats.navigation.speed, 1651.3, 1e-1
-  roughly test, stats.navigation.sig, 523, 1
+  roughly test, stats.navigation[1].speed, 1651.3, 1e-1
+  roughly test, stats.navigation[1].sig, 523, 1

@@ -33,3 +33,7 @@ lookupCategory = (typeName, check) ->
 @lookupModule = (typeName) ->
   lookupCategory typeName, (categoryName) ->
     categoryName == 'Module' || categoryName == 'Subsystem'
+
+@lookupName = (typeID) ->
+  type = InvTypes.findOne typeID: typeID
+  return type.typeName

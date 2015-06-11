@@ -14,6 +14,8 @@ class DescFitting
       inSpace: []
       inBay: []
     @implants = []
+    @mode = null
+    @propmods = [{typeName: 'None', typeID: 'None', key: -1}]
 
   # General
   ATTR_EMDAMAGE: 114
@@ -22,6 +24,7 @@ class DescFitting
   ATTR_THERMALDAMAGE: 118
   ATTR_LOCKRANGE: 76
   ATTR_MAXVELOCITY: 37
+  ATTR_SIGNATURERADIUS: 552
   # Missiles
   ATTR_MISSILEDAMAGEMULTIPLIER: 212
   ATTR_FLIGHTTIME: 281
@@ -51,6 +54,10 @@ class DescFitting
   EFFECT_ARMORRR: 592
   EFFECT_SHIELDTRANSFER: 18
 
+  EFFECT_SPEEDBOOST: 710 # for propmods
+  EFFECT_SPEEDBOOSTSIGMASS: 1254 # for mwd
+  EFFECT_MJD: 4921 # for mjd
+
   setShip: (s) ->
     @ship = s if @dogmaContext.setShip(s)
 
@@ -58,7 +65,7 @@ class DescFitting
     if (key = @dogmaContext.addImplant implant) != false
       i = {implant: implant, key: key}
       @implants.push(i);
-      key
+      return key
     else
       console.log "Error adding implant #{implant}"
 
@@ -66,7 +73,15 @@ class DescFitting
     if (key = @dogmaContext.addModuleS module, DOGMA.STATE_Active) != false
       m = {key: key, module: module, state: DOGMA.STATE_Active}
       @modules.push(m)
-      key
+
+      # propmod handling 
+      if typeHasEffect(module, DOGMA.STATE_Active, @EFFECT_SPEEDBOOST) or typeHasEffect(module, DOGMA.STATE_Active, @EFFECT_MJD)
+        @dogmaContext.setModuleState key, DOGMA.STATE_Online
+        typeName = lookupName module
+        prop = {typeID: module, typeName: typeName, key: key}
+        @propmods.push prop
+
+      return key
     else
       console.log "Error adding module #{module}"
 
@@ -110,7 +125,7 @@ class DescFitting
     attr = {}
     for id in attrIDs
       attr[id] = @dogmaContext.getShipAttribute id
-    attr
+    return attr
 
   getStats: ->
     stats = {}
@@ -118,7 +133,7 @@ class DescFitting
     stats.navigation = @getNavigation()
     stats.damage = @getDamage()
     stats.outgoing = @getOutgoing()
-    stats
+    return stats
 
   getTank: ->
     attr = @getShipAttributes [109, 110, 111, 113, 267, 268, 269, 270, 271, 272, 273, 274, 9, 263, 265]
@@ -135,12 +150,26 @@ class DescFitting
     # sum up ehp
     tank.ehp = tank.ehphull + tank.ehparmor + tank.ehpshield;
 
-    tank
+    return tank
 
   getNavigation: ->
-    attr = @getShipAttributes [@ATTR_MAXVELOCITY, 552]
+    attrIDs = [@ATTR_MAXVELOCITY, @ATTR_SIGNATURERADIUS]
 
-    navigation = {speed: attr[37], sig: attr[552]}
+    navigation = []
+    for prop in @propmods
+      stats = {}
+      stats.typeID = prop.typeID
+      stats.typeName = prop.typeName
+
+      @dogmaContext.setModuleState(prop.key, DOGMA.STATE_Active) if prop.key != -1
+      attr = @getShipAttributes [@ATTR_MAXVELOCITY, 552]
+      stats.speed = attr[@ATTR_MAXVELOCITY]
+      stats.sig = attr[@ATTR_SIGNATURERADIUS]
+
+      @dogmaContext.setModuleState(prop.key, DOGMA.STATE_Online) if prop.key != -1
+      navigation.push stats
+      
+    return navigation
 
   getDamage: ->
     result = {}
@@ -270,7 +299,7 @@ class DescFitting
 
     result.total = totalDPS
 
-    result
+    return result
 
   getOutgoing: ->
     result = {}
@@ -312,7 +341,7 @@ class DescFitting
     _.each result, (item) ->
       item.rr *= 1000
 
-    result
+    return result
 
 class DescFleet
   constructor: ->
