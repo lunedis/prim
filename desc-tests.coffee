@@ -1,7 +1,11 @@
-TYPE_Scimitar = 11978
+TYPE_SCIMITAR = 11978
 TYPE_PROTOTYPECLOAK = 11370
 TYPE_10MNAFTERBURNERII = 12058
 TYPE_50MNMWDII = 12076
+TYPE_ORACLE = 4302
+TYPE_MEGAPULSELASER = 3057
+TYPE_MEDIUMENERGYLOCUSII = 31486
+TYPE_SCORCHL = 12820
 
 roughly = (test, actual, expected, epsilon) ->
   test.equal((actual - expected) < epsilon, true)
@@ -11,7 +15,7 @@ Tinytest.add 'desc init', (test) ->
 
 Tinytest.add 'desc navigation basic', (test) ->
   fit = new DescFitting()
-  fit.setShip TYPE_Scimitar
+  fit.setShip TYPE_SCIMITAR
   stats = fit.getNavigation()
   navigation = stats[0] # no propmod
   test.equal navigation.typeName, 'None'
@@ -20,7 +24,7 @@ Tinytest.add 'desc navigation basic', (test) ->
 
 Tinytest.add 'desc tank basic', (test) ->
   fit = new DescFitting()
-  fit.setShip TYPE_Scimitar
+  fit.setShip TYPE_SCIMITAR
   stats = fit.getTank()
   test.equal stats.resihull, 1
   roughly test, stats.resiarmor, 1.927653498, 1e-3
@@ -120,7 +124,7 @@ Tinytest.add 'desc drones', (test) ->
 Tinytest.add 'desc cloak', (test) ->
   fit = new DescFitting()
 
-  fit.setShip TYPE_Scimitar 
+  fit.setShip TYPE_SCIMITAR 
   fit.addModule TYPE_PROTOTYPECLOAK
 
   nav = fit.getNavigation()
@@ -130,7 +134,7 @@ Tinytest.add 'desc cloak', (test) ->
 Tinytest.add 'desc dualprop', (test) ->
   fit = new DescFitting()
 
-  fit.setShip TYPE_Scimitar
+  fit.setShip TYPE_SCIMITAR
   fit.addModule TYPE_10MNAFTERBURNERII
   fit.addModule TYPE_50MNMWDII
 
@@ -222,3 +226,13 @@ Tinytest.add 'desc fleet', (test) ->
   roughly test, stats.tank.ehp, 41227, 1
   roughly test, stats.navigation[1].speed, 1651.3, 1e-1
   roughly test, stats.navigation[1].sig, 523, 1
+
+Tinytest.add 'desc dps application turret', (test) ->
+  fit = new DescFitting
+  fit.setShip TYPE_Oracle
+  fit.addModuleWithCharge TYPE_MEGAPULSELASER, TYPE_SCORCHL
+  fit.addModule TYPE_MEDIUMENERGYLOCUSII
+  fit.addModule TYPE_MEDIUMENERGYLOCUSII
+
+  damageStats = fit.getDamage
+  console.log damageStats
