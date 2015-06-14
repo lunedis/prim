@@ -149,7 +149,7 @@ Fittings.attachSchema(StoreFittingsSchema);
 
 // Collection2 already does schema checking
 // Add custom permission rules if needed
-Meteor.startup(function() {
+if(Meteor.isServer) {
   Fittings.allow({
     insert : function () {
       return false;
@@ -213,4 +213,4 @@ Meteor.startup(function() {
       Fittings.update(documentID, modifier);
     }
   });
-});
+}
