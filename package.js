@@ -11,15 +11,16 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.use('coffeescript', 'server');
+  api.use('coffeescript', ['server', 'client']);
   api.use('livedata', 'server');
 
-  api.export('Desc', 'server');
+  api.export('Desc', ['server', 'client']);
   api.export('DescFitting', 'server');
   api.export('DescFleet', 'server');
 
   api.addFiles('invtypes.coffee', 'server');
   api.addFiles('libdogmaffi.coffee', 'server');
+  api.addFiles('desc-dps.coffee', ['server', 'client'])
   api.addFiles('desc.coffee', 'server');
   api.addFiles('methods.coffee', 'server');
 });
@@ -30,6 +31,7 @@ Package.onTest(function(api) {
   api.use('leokokim:desc');
   api.addFiles('libdogmaffi-tests.coffee', 'server');
   api.addFiles('desc-tests.coffee', 'server');
+  api.addFiles('desc-dps-tests.coffee', ['server', 'client']);
 });
 
 Npm.depends({
